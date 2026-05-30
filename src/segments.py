@@ -136,45 +136,53 @@ def _find_lat_g_column(tel: pd.DataFrame) -> str | None:
     return None
 
 
-def _compute_lateral_g_from_position(tel: pd.DataFrame, smooth_window: int = 7) -> pd.DataFrame:
+def _compute_lateral_g_from_position(tel: pd.DataFrame, smooth_window: int = 5) -> pd.DataFrame:
     """
-    Estimate lateral acceleration from GPS X/Y position.
+    Estimate lateral acceleration from GPS position rows only.
 
-    Uses radius-of-curvature method (v²/r) which is more robust than the
-    cross-product of raw differences at 10 Hz. Position is smoothed first
-    to reduce quantisation noise before computing derivatives.
+    Filters to Source=='pos' rows first so all dt values come from actual GPS
+    fixes at consistent spacing (~10 Hz), avoiding the blow-up caused by mixing
+    car-telemetry rows (240 Hz) with GPS rows.
     """
     if "X" not in tel.columns or "Y" not in tel.columns:
+        return tel
+    if "Source" not in tel.columns:
         return tel
 
     tel = tel.copy()
 
-    # Smooth X/Y to suppress GPS quantisation noise before differentiating
-    w = max(3, smooth_window | 1)  # ensure odd
-    x_s = tel["X"].rolling(w, center=True, min_periods=1).mean()
-    y_s = tel["Y"].rolling(w, center=True, min_periods=1).mean()
+    # Work only on actual GPS position rows, dropping rows that are too
+    # close together (<0.1 s apart) — those cause quantisation blow-up
+    # when differentiating 1-dm-resolution positions.
+    gps = tel[tel["Source"] == "pos"].copy().reset_index(drop=True)
+    if len(gps) < 5:
+        return tel
 
-    dt = tel["t"].diff().fillna(0.02).clip(lower=1e-4)
-    dx = x_s.diff().fillna(0)
-    dy = y_s.diff().fillna(0)
+    dt_all = gps["t"].diff().fillna(0.24)
+    gps = gps[dt_all >= 0.1].copy().reset_index(drop=True)
+    if len(gps) < 5:
+        return tel
 
-    vx = dx / dt
-    vy = dy / dt
+    dt = gps["t"].diff().bfill().clip(lower=0.1)
+    w = max(3, smooth_window | 1)
 
-    # Smooth velocities before second derivative
-    vx_s = pd.Series(vx).rolling(w, center=True, min_periods=1).mean()
-    vy_s = pd.Series(vy).rolling(w, center=True, min_periods=1).mean()
+    # Convert decimeter coordinates to metres so units match the speed channel
+    x_m = gps["X"] * 0.1
+    y_m = gps["Y"] * 0.1
 
-    dvx = vx_s.diff().fillna(0) / dt
-    dvy = vy_s.diff().fillna(0) / dt
+    # Velocity from position differences
+    vx = (x_m.diff().fillna(0) / dt).rolling(w, center=True, min_periods=1).mean()
+    vy = (y_m.diff().fillna(0) / dt).rolling(w, center=True, min_periods=1).mean()
 
-    speed = tel["v_ms"].clip(lower=1.0)
+    # Acceleration from velocity differences
+    ax = (vx.diff().fillna(0) / dt).rolling(w, center=True, min_periods=1).mean()
+    ay = (vy.diff().fillna(0) / dt).rolling(w, center=True, min_periods=1).mean()
 
-    # Centripetal lat-g via cross product: (ax*vy - ay*vx) / |v|
-    lat_a_raw = (dvx * vy_s - dvy * vx_s) / (speed * 9.81)
+    speed = gps["v_ms"].clip(lower=1.0)
+    lat_g = (ax * vy - ay * vx) / (speed * 9.81)
 
-    # Final smooth pass to remove remaining spike noise
-    lat_a = lat_a_raw.rolling(w, center=True, min_periods=1).mean()
-
-    tel["lat_g_computed"] = lat_a.values
+    # Interpolate back onto the full telemetry time index
+    tel["lat_g_computed"] = np.interp(
+        tel["t"].values, gps["t"].values, lat_g.fillna(0).values
+    )
     return tel

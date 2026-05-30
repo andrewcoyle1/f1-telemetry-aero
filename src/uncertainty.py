@@ -33,7 +33,15 @@ def propagate_uncertainty(
     Draw from the distribution of each fit result's alpha/beta (treating them as
     independent Gaussians) and ClA, then compute the resulting CdA distribution.
     Aggregates across all fit results by pooling.
+    Returns an MCResult of NaNs if fit_results is empty.
     """
+    if not fit_results:
+        nan = float('nan')
+        return MCResult(
+            CdA_mean=nan, CdA_std=nan, CdA_p5=nan, CdA_p95=nan,
+            Crr_mean=nan, Crr_std=nan,
+        )
+
     rng = np.random.default_rng(seed)
     CdA_pool: list[np.ndarray] = []
     Crr_pool: list[np.ndarray] = []

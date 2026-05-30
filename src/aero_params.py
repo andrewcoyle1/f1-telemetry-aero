@@ -52,6 +52,110 @@ def extract_crr_and_composite(
     return Crr, composite
 
 
+# Known fast-corner geometry for Monza (circuit-distance in metres, radius in metres).
+# Only corners where F1 cars operate at/near the tyre friction limit are included.
+MONZA_CORNERS = [
+    {"name": "Curva Grande",  "dist_lo": 1200, "dist_hi": 1600, "radius": 300},
+    {"name": "Lesmo 1",       "dist_lo": 1750, "dist_hi": 1950, "radius": 140},
+    {"name": "Lesmo 2",       "dist_lo": 2050, "dist_hi": 2250, "radius": 100},
+    {"name": "Parabolica",    "dist_lo": 4900, "dist_hi": 5250, "radius":  80},
+]
+
+
+def estimate_ClA_from_corners(
+    lap_telemetry: pd.DataFrame,
+    m: float,
+    rho: float,
+    corners: list[dict] | None = None,
+    min_speed_kmh: float = 150.0,
+    min_throttle: float = 50.0,
+) -> tuple[list[float], list[float]]:
+    """
+    Estimate ClA using known corner radii rather than GPS-derived lateral g.
+
+    For each corner passage, centripetal acceleration = v²/R (no GPS needed).
+    Returns (v2_list, centripetal_a_list) suitable for linear regression in the notebook.
+
+    Tyre friction model:   v²/R  =  μ·g  +  (μ·ρ·ClA)/(2m) · v²
+    Fitting v²/R vs v²:
+        intercept → μ = b / g
+        slope     → ClA = a · 2m / (μ·ρ)
+    """
+    if corners is None:
+        corners = MONZA_CORNERS
+
+    tel = lap_telemetry.copy().reset_index(drop=True)
+    if "Distance" not in tel.columns:
+        return [], []
+
+    tel["v_ms"] = tel["Speed"] / 3.6
+    v2_out, ca_out = [], []
+
+    for corner in corners:
+        mask = (
+            (tel["Distance"] >= corner["dist_lo"])
+            & (tel["Distance"] <= corner["dist_hi"])
+            & (tel["Speed"] >= min_speed_kmh)
+            & (tel["Throttle"] >= min_throttle)
+        )
+        seg = tel[mask]
+        if seg.empty:
+            continue
+
+        v2 = seg["v_ms"].values ** 2
+        centripetal_a = v2 / corner["radius"]   # m/s²
+
+        v2_out.extend(v2.tolist())
+        ca_out.extend(centripetal_a.tolist())
+
+    return v2_out, ca_out
+
+
+def fit_ClA_from_corners(
+    v2_all: list[float],
+    ca_all: list[float],
+    m: float,
+    rho: float,
+) -> tuple[float, float, float, float]:
+    """
+    Linear regression of centripetal_a vs v² across all corner samples:
+        ca = a·v² + b   →   a = μ·ρ·ClA/(2m),  b = μ·g
+
+    Returns (ClA, ClA_std, mu, mu_std).
+    """
+    v2 = np.array(v2_all)
+    ca = np.array(ca_all)
+
+    if len(v2) < 4:
+        return np.nan, np.nan, np.nan, np.nan
+
+    # OLS with intercept
+    X = np.column_stack([v2, np.ones_like(v2)])
+    coeffs, residuals, _, _ = np.linalg.lstsq(X, ca, rcond=None)
+    a, b = coeffs
+
+    # Uncertainty from residual variance
+    if len(v2) > 2 and a > 0 and b > 0:
+        ca_pred = a * v2 + b
+        sigma2 = np.sum((ca - ca_pred) ** 2) / (len(v2) - 2)
+        XtX_inv = np.linalg.inv(X.T @ X)
+        se = np.sqrt(np.diag(sigma2 * XtX_inv))
+        a_std, b_std = se
+    else:
+        a_std, b_std = np.nan, np.nan
+
+    mu     = b / G
+    mu_std = b_std / G if np.isfinite(b_std) else np.nan
+
+    if a <= 0 or mu <= 0:
+        return np.nan, np.nan, np.nan, np.nan
+
+    ClA     = a * 2.0 * m / (mu * rho)
+    ClA_std = ClA * np.sqrt((a_std / a) ** 2 + (mu_std / mu) ** 2) if np.isfinite(a_std) else np.nan
+
+    return float(ClA), float(ClA_std), float(mu), float(mu_std)
+
+
 def estimate_ClA(
     lap_telemetry: pd.DataFrame,
     m: float,
@@ -62,8 +166,8 @@ def estimate_ClA(
     min_throttle: float = 80.0,
 ) -> tuple[float, float]:
     """
-    Estimate ClA from high-speed corner samples using tyre friction model:
-        m·lat_a = μ·(m·g + ½ρ·ClA·v²)
+    Legacy GPS-based ClA estimator (kept for API compatibility).
+    Estimate ClA from high-speed corner samples using tyre friction model.
     Returns (median_ClA, std_ClA).
     """
     samples = extract_corner_samples(
@@ -78,7 +182,6 @@ def estimate_ClA(
     v = samples["v_ms"].values
     lat_a = samples["lat_g"].values * G
 
-    # ClA = (2m/ρ) * (lat_a/μ - g) / v²
     with np.errstate(divide="ignore", invalid="ignore"):
         ClA_vals = (2.0 * m / rho) * (lat_a / mu - G) / v**2
 
