@@ -15,15 +15,17 @@ G = 9.81
 
 @dataclass
 class AeroParams:
-    CdA: float
+    CdA: float                  # corner mode (high downforce)
     CdA_std: float
     ClA: float
     ClA_std: float
     Crr: float
     Crr_std: float
-    CdA_drs_open: float
-    CdA_drs_open_std: float
-    delta_CdA: float
+    CdA_straight_mode: float    # straight mode (active aero open)
+    CdA_straight_mode_std: float
+    CdA_corner_mode: float      # corner mode (active aero closed)
+    CdA_corner_mode_std: float
+    delta_CdA: float            # straight_mode − corner_mode (negative = drag reduction)
     delta_CdA_std: float
 
 
@@ -34,10 +36,10 @@ def air_density(temp_C: float, pressure_hPa: float) -> float:
 
 def car_mass(
     lap_number: int,
-    M_car: float = 798.0,
+    M_car: float = 795.0,   # 2026 FIA minimum car mass (no MGU-H, lighter PU)
     M_driver: float = 80.0,
-    M_fuel_0: float = 95.0,
-    fuel_burn: float = 1.8,
+    M_fuel_0: float = 70.0,  # 2026 fuel load ~70 kg (more efficient hybrid, no MGU-H)
+    fuel_burn: float = 1.6,  # kg/lap; slightly lower than 2024 due to hybrid efficiency
 ) -> float:
     fuel = max(0.0, M_fuel_0 - fuel_burn * lap_number)
     return M_car + M_driver + fuel
@@ -203,10 +205,12 @@ def aggregate_results(
     ClA_std: float,
 ) -> AeroParams:
     """
-    Aggregate fit results into final aero parameters, separated by DRS state.
+    Aggregate fit results into final aero parameters, separated by active aero mode.
+    straight_mode=True  → active aero open (low drag)
+    straight_mode=False → corner mode (high downforce)
     """
-    closed = [r for r in fit_results if not r.drs_open]
-    opened = [r for r in fit_results if r.drs_open]
+    corner = [r for r in fit_results if not r.straight_mode]
+    straight = [r for r in fit_results if r.straight_mode]
 
     def _stats(results: list[FitResult]) -> tuple[float, float, float, float]:
         if not results:
@@ -217,26 +221,27 @@ def aggregate_results(
             float(np.median(composites)), float(np.std(composites)),
         )
 
-    Crr_med, Crr_std, comp_closed, comp_closed_std = _stats(closed)
-    _, _, comp_open, comp_open_std = _stats(opened)
+    Crr_med, Crr_std, comp_corner, comp_corner_std = _stats(corner)
+    _, _, comp_straight, comp_straight_std = _stats(straight)
 
-    CdA_closed = compute_CdA(comp_closed, Crr_med, ClA)
-    CdA_open = compute_CdA(comp_open, Crr_med, ClA)
+    CdA_corner = compute_CdA(comp_corner, Crr_med, ClA)
+    CdA_straight = compute_CdA(comp_straight, Crr_med, ClA)
 
-    # Simple quadrature for std propagation
-    CdA_closed_std = np.sqrt(comp_closed_std**2 + (Crr_std * ClA)**2 + (Crr_med * ClA_std)**2)
-    CdA_open_std = np.sqrt(comp_open_std**2 + (Crr_std * ClA)**2 + (Crr_med * ClA_std)**2)
-    delta_std = np.sqrt(CdA_closed_std**2 + CdA_open_std**2)
+    CdA_corner_std = np.sqrt(comp_corner_std**2 + (Crr_std * ClA)**2 + (Crr_med * ClA_std)**2)
+    CdA_straight_std = np.sqrt(comp_straight_std**2 + (Crr_std * ClA)**2 + (Crr_med * ClA_std)**2)
+    delta_std = np.sqrt(CdA_corner_std**2 + CdA_straight_std**2)
 
     return AeroParams(
-        CdA=CdA_closed,
-        CdA_std=CdA_closed_std,
+        CdA=CdA_corner,
+        CdA_std=CdA_corner_std,
         ClA=ClA,
         ClA_std=ClA_std,
         Crr=Crr_med,
         Crr_std=Crr_std,
-        CdA_drs_open=CdA_open,
-        CdA_drs_open_std=CdA_open_std,
-        delta_CdA=CdA_open - CdA_closed,
+        CdA_straight_mode=CdA_straight,
+        CdA_straight_mode_std=CdA_straight_std,
+        CdA_corner_mode=CdA_corner,
+        CdA_corner_mode_std=CdA_corner_std,
+        delta_CdA=CdA_straight - CdA_corner,   # negative = drag reduction in straight mode
         delta_CdA_std=delta_std,
     )

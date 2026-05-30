@@ -31,7 +31,7 @@ class FitResult:
     P_mgu_std: float
     v0: float           # m/s
     m: float            # kg
-    drs_open: bool
+    straight_mode: bool
     lap_number: int
     r2: float
 
@@ -57,7 +57,7 @@ def fit_segment(
     seg: pd.DataFrame,
     m: float,
     rho: float,
-    drs_open: bool,
+    straight_mode: bool,
     lap_number: int,
     beta_fixed: float | None = None,
 ) -> FitResult | None:
@@ -158,7 +158,7 @@ def fit_segment(
         P_mgu_std=P_mgu_std,
         v0=v0,
         m=m,
-        drs_open=drs_open,
+        straight_mode=straight_mode,
         lap_number=lap_number,
         r2=r2,
     )
@@ -167,7 +167,7 @@ def fit_segment(
 def fit_segments_pooled(
     segments: list[pd.DataFrame],
     m_list: list[float],
-    drs_states: list[bool],
+    drs_states: list[bool],   # True = straight mode (active aero open)
     lap_numbers: list[int],
     seed_results: list[FitResult] | None = None,
     beta_fixed: float | None = None,
@@ -285,7 +285,7 @@ def fit_segments_pooled(
             P_mgu_std=float(P_mgu_stds[i]),
             v0=v0_list[i],
             m=m_list[i],
-            drs_open=drs_states[i],
+            straight_mode=drs_states[i],
             lap_number=lap_numbers[i],
             r2=r2,
         ))
@@ -297,13 +297,13 @@ def fit_all_segments(
     segments: list[pd.DataFrame],
     m: float,
     rho: float,
-    drs_states: list[bool],
+    aero_states: list[bool],   # True = straight mode
     lap_number: int,
     min_r2: float = 0.90,
 ) -> list[FitResult]:
     results = []
-    for seg, drs in zip(segments, drs_states):
-        result = fit_segment(seg, m, rho, drs, lap_number)
+    for seg, state in zip(segments, aero_states):
+        result = fit_segment(seg, m, rho, state, lap_number)
         if result is not None and result.r2 >= min_r2:
             results.append(result)
     return results

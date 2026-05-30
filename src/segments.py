@@ -80,12 +80,47 @@ def _maybe_add(
         segments.append(seg)
 
 
-def segment_drs_state(seg: pd.DataFrame) -> bool:
-    """Return True if majority of segment has DRS open."""
+def segment_active_aero_state(seg: pd.DataFrame) -> bool:
+    """Return True if majority of segment has active aero in straight mode (DRS channel > 10)."""
     if "DRS" not in seg.columns:
         return False
     open_count = seg["DRS"].apply(drs_is_open).sum()
     return open_count > len(seg) / 2
+
+
+# 2026 active aero zone boundaries per circuit (lap distance in metres).
+# Straight mode is permitted inside these ranges; corner mode is enforced outside.
+# Distances are approximate and should be verified from telemetry DRS transitions.
+ACTIVE_AERO_ZONES: dict[str, list[tuple[int, int]]] = {
+    "canada": [
+        (0,    1100),   # Zone 1: start/finish straight to T1 chicane
+        (2100, 3000),   # Zone 2: Casino hairpin exit to T13 hairpin approach
+    ],
+    "miami": [
+        (0,    900),    # Zone 1: start/finish straight to T1
+        (2600, 3300),   # Zone 2: back straight section 3
+    ],
+}
+
+
+def segment_in_active_aero_zone(seg: pd.DataFrame, circuit: str) -> bool | None:
+    """
+    Return True if the median distance of the segment falls within a designated
+    active aero zone for the given circuit.  Returns None if circuit is unknown
+    or Distance column is absent.
+    """
+    if "Distance" not in seg.columns:
+        return None
+    zones = ACTIVE_AERO_ZONES.get(circuit.lower())
+    if zones is None:
+        return None
+    med = float(seg["Distance"].median())
+    return any(lo <= med <= hi for lo, hi in zones)
+
+
+def segment_drs_state(seg: pd.DataFrame) -> bool:
+    """Alias for segment_active_aero_state; retained for backward compatibility."""
+    return segment_active_aero_state(seg)
 
 
 def extract_corner_samples(
