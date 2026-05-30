@@ -80,12 +80,25 @@ def _maybe_add(
         segments.append(seg)
 
 
-def segment_active_aero_state(seg: pd.DataFrame) -> bool:
-    """Return True if majority of segment has active aero in straight mode (DRS channel > 10)."""
-    if "DRS" not in seg.columns:
-        return False
-    open_count = seg["DRS"].apply(drs_is_open).sum()
-    return open_count > len(seg) / 2
+def segment_active_aero_state(seg: pd.DataFrame, circuit: str | None = None) -> bool:
+    """
+    Return True if segment has active aero in straight mode.
+
+    Primary: DRS channel majority-vote (>10 = open).
+    Fallback: position-based zone lookup when DRS channel is absent or all-zero.
+    FastF1 ≤3.8.x does not decode 2026 active aero — channel stays at 0 — so
+    the position fallback is the active path for 2026 data.
+    """
+    if "DRS" in seg.columns and seg["DRS"].apply(drs_is_open).any():
+        open_count = seg["DRS"].apply(drs_is_open).sum()
+        return open_count > len(seg) / 2
+
+    if circuit is not None:
+        zone_result = segment_in_active_aero_zone(seg, circuit)
+        if zone_result is not None:
+            return zone_result
+
+    return False
 
 
 # 2026 active aero zone boundaries per circuit (lap distance in metres).
@@ -118,9 +131,9 @@ def segment_in_active_aero_zone(seg: pd.DataFrame, circuit: str) -> bool | None:
     return any(lo <= med <= hi for lo, hi in zones)
 
 
-def segment_drs_state(seg: pd.DataFrame) -> bool:
+def segment_drs_state(seg: pd.DataFrame, circuit: str | None = None) -> bool:
     """Alias for segment_active_aero_state; retained for backward compatibility."""
-    return segment_active_aero_state(seg)
+    return segment_active_aero_state(seg, circuit=circuit)
 
 
 def extract_corner_samples(
