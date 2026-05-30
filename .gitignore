@@ -1,0 +1,28 @@
+# FastF1 cache — large downloaded data, never commit
+cache/
+
+# Intermediate pickle results — reproducible from notebooks
+results/*.pkl
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Secrets / environment
+.env
+.env.*
