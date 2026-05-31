@@ -60,6 +60,7 @@ def fit_segment(
     straight_mode: bool,
     lap_number: int,
     beta_fixed: float | None = None,
+    min_speed_drop: float = 25.0,
 ) -> FitResult | None:
     """
     Fit (alpha, P_mgu) — or (alpha, beta, P_mgu) if beta_fixed is None — to a
@@ -68,6 +69,10 @@ def fit_segment(
     beta_fixed: if provided, β is held at this value (N) and only α and P_mgu
                 are fitted. Recommended: use the median β from a prior free fit
                 (e.g. 120 N) to break the α/β/P_mgu degeneracy.
+
+    min_speed_drop: minimum speed decrease over the segment in m/s (default 25.0).
+                    Lower values allow shorter segments (e.g. 10.0 for tight circuits)
+                    at the cost of reduced α/P_mgu separability.
 
     Returns None if the fit fails or the result is physically unreasonable.
     """
@@ -79,7 +84,7 @@ def fit_segment(
     # Require high entry speed, enough data points, and a minimum speed drop.
     # The speed-drop filter ensures α·v² and P_mgu/v have genuinely different
     # shapes across the segment — the key condition for reliable separation.
-    if v0 < 50.0 or len(t) < 10 or v_drop < 25.0:
+    if v0 < 50.0 or len(t) < 10 or v_drop < min_speed_drop:
         return None
 
     if beta_fixed is not None:
