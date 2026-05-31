@@ -1,86 +1,103 @@
-# F1 Telemetry Aero Characterisation
+# F1 Telemetry Aerodynamics
 
-Extract aerodynamic coefficients from real F1 telemetry using coast-down ODE fitting and high-speed corner analysis.
+Characterise aerodynamic parameters — CdA, ClA, Crr — from public F1 telemetry using [FastF1](https://github.com/theOehrly/Fast-F1). All analysis is based on timing and GPS data from the F1 live timing API; no proprietary team data is used.
 
-Dataset: Monza 2024 (FP1/FP2/FP3), with cross-validation against Belgium (Spa) 2024.
+Primary dataset: **Monza 2024** (low-drag package). Secondary dataset: **Silverstone 2024** (medium-high downforce), same car (Aston Martin AMR24).
 
-## Results
+---
 
-| Quantity | Result | Expected | Status |
+## Key Results
+
+| Parameter | Monza 2024 | Silverstone 2024 | Ratio S/M |
 |---|---|---|---|
-| ClA (downforce area) | 3.36 ± 0.65 m² | 2.5–3.5 m² | ✓ |
-| Crr (rolling resistance) | 0.0131 | 0.015–0.020 | Fixed from data |
-| CdA (drag area, coast-down) | 1.37 ± 0.01 m² | 0.8–1.0 m² | See note |
-| ΔCDA (DRS delta) | n/a | −0.5 to −0.8 m² | No DRS-open data |
+| Pooled α (N·s²/m²) | 0.800 ± 0.002 | 1.076 ± 0.005 | **1.35×** |
+| Composite 2α/ρ (m²) | 1.410 | 1.805 | 1.28× |
+| ClA (m²) | 3.36 ± 0.65 | 3.88 ± 0.56 | 1.16× |
+| CdA (m²)* | 1.37 ± 0.01 | 1.75 ± 0.01 | 1.28× |
+| Crr | 0.0131 | 0.0131 | **1.00** |
+| ΔClA / ΔCdA efficiency | — | — | **1.4** |
 
-**Note on CdA:** The composite drag (2α/ρ = 1.41 m²) is ~40% above the expected race-speed value. This is a known limitation of the coast-down method applied to ground-effect cars: at the 40–80 m/s deceleration range the car rides higher than at race speed, increasing the effective CdA. The Spa/Monza composite ratio (1.29×) is physically consistent with the higher-downforce Spa setup, confirming the relative values are correct. An absolute correction would require suspension travel data not available in FastF1.
+*CdA is inflated ~40% by engine braking torque absorbed into the drag coefficient — see [Limitations](#limitations).
 
-## Setup
+The Crr equality across circuits is a useful internal consistency check: rolling resistance is a car property, not a setup variable, and it is identical to three decimal places.
+
+---
+
+## Methods
+
+### 1. Coast-down ODE fit (`nb02`, `nb06`)
+
+Free-deceleration segments (throttle < 5%, brake = 0) are extracted from FP telemetry and fitted to:
+
+$$m\frac{dv}{dt} = -\alpha v^2 - \beta - \frac{P_\text{MGU}}{v}$$
+
+where α = ½ρ(CdA + Crr·ClA) is the aerodynamic coefficient, β = Crr·mg is rolling resistance, and P_MGU is MGU-K harvest power modelled as a constant-power retarding term. β is fixed at a prior median (120 N) to break the α/β/P_MGU degeneracy. Segments across FP1/FP2/FP3 are pooled into a shared-α fit to tighten parameter uncertainty.
+
+### 2. ClA from GPS lateral g (`nb03`, `nb06`)
+
+At high-speed corners the tyre friction limit gives:
+
+$$a_\text{lat} = \mu\left(g + \frac{\rho C_L A}{2m}v^2\right)$$
+
+GPS position (10 Hz) is differentiated to compute lateral acceleration. Samples above a circuit-specific threshold (2.5g at Monza; 3.5g at Silverstone's Maggotts-Becketts) select near-limit apices. ClA is the median over all qualifying lap estimates with μ = 1.8 assumed. Sensitivity to μ is reported in `nb03`.
+
+### 3. DRS drag delta (`nb05`)
+
+Race trap speeds on the Monza main straight are compared between DRS-open and DRS-closed laps, converted to ΔCDA via an energy balance over the activation zone. A slipstream-stratification analysis (gap to car ahead from lap-end timing) confirms the two effects cannot be separated in race data: every DRS-eligible lap is also a slipstream lap.
+
+### 4. Circuit comparison (`nb06`)
+
+The same pipeline runs on Silverstone 2024 FP data (driver 18, Aston Martin) and is compared against Monza. The ΔClA/ΔCdA ratio of **1.4** quantifies the aerodynamic efficiency of the higher-wing Silverstone setup: 1.4 m² of downforce gained per m² of drag added.
+
+---
+
+## Limitations
+
+**Engine braking inflates CdA.** The ODE has no explicit engine-braking term. At throttle = 0 the drivetrain applies additional retarding torque through compression and MGU-H harvest, which is absorbed into α. The Durbin-Watson statistic for ODE residuals is 0.66–0.71 across both circuits (target ≈ 2.0), confirming systematic positive autocorrelation. CdA absolute values are upper bounds; composite 2α/ρ values and cross-circuit *ratios* are reliable.
+
+**DRS delta inseparable from slipstream in race data.** In 2024 DRS requires a gap ≤ 1 s — the same condition that guarantees wake exposure. The pooled ΔCDA = −0.107 m² (90% CI: −0.28 to +0.05) captures DRS + slipstream combined and cannot be decomposed without controlling for following distance.
+
+**ClA depends on assumed μ.** At μ = 1.5 the Monza estimate becomes 3.93 m²; at μ = 2.0 it is 3.02 m². Sensitivity curves are in `nb03`.
+
+**2026 active aero channel absent from F1 API.** Inspecting the raw timing stream for Canada 2026 (documented in `nb05` on the `2026-regs` branch) shows that channel 45 — DRS in 2024 — is absent from every 2026 car data message. Mode-split ΔCdA measurement requires this channel to be added to the API.
+
+---
+
+## Repository Structure
+
+```
+notebooks/
+  01_data_exploration.ipynb      # channel verification, DRS encoding, GPS quality
+  02_coastdown_fit.ipynb         # ODE fit, pooled α, Spa cross-validation
+  03_ClA_estimation.ipynb        # GPS lat-g ClA, μ sensitivity
+  04_full_characterisation.ipynb # CdA, Crr, MC uncertainty
+  05_drs_delta.ipynb             # DRS trap speed analysis, slipstream stratification
+  06_circuit_comparison.ipynb    # Monza vs Silverstone setup comparison (self-contained)
+
+src/
+  segments.py     # coast-down and corner sample extraction
+  ode_fit.py      # ODE integration, per-segment and pooled fitting
+  aero_params.py  # CdA/ClA/Crr derivation, car mass model
+  uncertainty.py  # Monte Carlo uncertainty propagation
+
+results/figures/  # saved plots
+```
+
+The `2026-regs` branch extends the analysis to Canada 2026 and documents the active aero API investigation.
+
+---
+
+## Running
 
 ```bash
 pip install -r requirements.txt
+jupyter lab
 ```
 
-## Notebooks
+Run notebooks in order (01 → 06). Each notebook caches session data on first run via FastF1; subsequent runs load from `cache/`. `nb06` is self-contained and does not depend on pkl files from earlier notebooks.
 
-| Notebook | Purpose | Status |
-|---|---|---|
-| `01_data_exploration` | Verify telemetry channels, DRS encoding, GPS availability | ✓ |
-| `02_coastdown_fit` | Driver survey across FP sessions/circuits, ODE fitting, pooled fit, Spa validation | ✓ |
-| `03_ClA_estimation` | GPS lateral-g computation, downforce area from high-speed corners | ✓ |
-| `04_full_characterisation` | Combine CdA, Crr, ClA → final parameters with Monte Carlo uncertainty | ✓ |
+---
 
-## Physical model
+## Data
 
-Coast-down ODE with MGU-K energy recovery term:
-
-```
-m·dv/dt = -α·v² - β - P_mgu/v
-```
-
-| Parameter | Physical meaning | How estimated |
-|---|---|---|
-| α | ½ρ·(CdA + Crr·ClA) | Pooled fit across all segments (shared) |
-| β | Crr·m·g | Fixed at 120 N from per-segment median |
-| P_mgu | MGU-K harvest power | Per-segment free parameter (0–120 kW) |
-
-ClA from high-speed corner lateral-g via tyre friction model:
-
-```
-m·v²/R = μ·(m·g + ½ρ·ClA·v²)
-```
-
-## Pipeline
-
-```
-FastF1 (Monza + Spa FP sessions)
-        │
-        ▼
-  segments.py        ← extract coast-down & corner slices
-        │
-        ▼
-   ode_fit.py        ← 3-param ODE fit per segment → pooled fit (shared α)
-        │
-  aero_params.py     ← GPS lateral-g → ClA from corner samples
-        │
-        └──────────────────────┐
-                               ▼
-                   aggregate + uncertainty.py
-                               │
-                               ▼
-                   CdA, ClA, Crr ± MC bounds
-```
-
-## Key implementation notes
-
-- **GPS lat-g**: FastF1 merges car data (~240 Hz) with GPS (~4 Hz). Computing lateral acceleration requires filtering to `Source=='pos'` rows, removing close-together GPS fixes (dt < 0.1 s), and converting from decimeter to meter coordinates before differentiating.
-- **MGU-K term**: Two-parameter fits (α, β only) absorb energy recovery braking into β, inflating both parameters. Adding P_mgu/v gives β = 120 N (Crr = 0.013) and P_mgu = 0–53 kW, physically consistent with MGU-K harvest rates.
-- **Pooled fitting**: α and β are physical constants of the car setup. Fitting them as shared parameters across all segments (with only P_mgu free per segment) reduces parameter count from 3N to N+2 and tightens the α estimate.
-- **Speed-drop filter**: Segments require a minimum 25 m/s speed drop to ensure the three ODE terms have distinguishable shapes across the data.
-- **DRS delta**: DRS closes at lift-off, so coast-down segments are always DRS-closed. The delta requires a different approach (e.g. comparing acceleration traces on DRS-eligible straights).
-
-## Known limitations
-
-1. CdA is ~40% above race-speed value due to ride-height dependence of ground-effect aerodynamics
-2. DRS drag delta cannot be extracted from free-practice coast-down data
-3. Crr is fixed rather than fitted due to degeneracy in the 3-parameter model with available segment lengths
+All telemetry is fetched from the [F1 Live Timing API](https://livetiming.formula1.com) via FastF1. No proprietary or commercially licensed data is used.
