@@ -184,12 +184,19 @@ def fit_segments_pooled(
     lap_numbers: list[int],
     seed_results: list[FitResult] | None = None,
     beta_fixed: float | None = None,
+    fit_v0: bool = False,
+    v0_window: float = 3.0,
 ) -> list[FitResult] | None:
     """
     Pooled fitting: α and β are shared across all segments; P_mgu varies per segment.
 
     Parameters reduce from 3×N (per-segment) to 2 + N (pooled), giving much
     tighter constraints on α and β when N ≥ 3.
+
+    fit_v0: if True, also fit a per-segment v0 offset (bounded to ±v0_window m/s
+            around the measured first speed). This absorbs initial-condition noise
+            from the speed sensor and typically improves Durbin-Watson substantially.
+    v0_window: half-width of the v0 search window in m/s (default 3.0).
 
     seed_results: per-segment FitResult list used to warm-start the optimiser.
                   Falls back to fixed defaults if None.
@@ -213,15 +220,18 @@ def fit_segments_pooled(
 
     def _residuals(params: np.ndarray) -> np.ndarray:
         if _beta is not None:
-            alpha = params[0]
-            P_mgus = params[1:]
-            beta = _beta
+            alpha   = params[0]
+            P_mgus  = params[1 : 1 + n]
+            dv0s    = params[1 + n :] if fit_v0 else np.zeros(n)
+            beta    = _beta
         else:
             alpha, beta = params[0], params[1]
-            P_mgus = params[2:]
+            P_mgus  = params[2 : 2 + n]
+            dv0s    = params[2 + n :] if fit_v0 else np.zeros(n)
         parts = []
         for i in range(n):
-            v_pred = v_model(t_list[i], alpha, beta, P_mgus[i], v0_list[i], m_list[i])
+            v0_i = v0_list[i] + float(dv0s[i])
+            v_pred = v_model(t_list[i], alpha, beta, P_mgus[i], v0_i, m_list[i])
             parts.append(v_list[i] - v_pred)
         return np.concatenate(parts)
 
@@ -235,13 +245,13 @@ def fit_segments_pooled(
         p0_list = [60_000.0] * n
 
     if _beta is not None:
-        x0 = np.array([a0] + p0_list)
-        lower = np.array([0.10] + [0.0]       * n)
-        upper = np.array([2.50] + [120_000.0] * n)
+        x0    = np.array([a0] + p0_list + ([0.0] * n if fit_v0 else []))
+        lower = np.array([0.10] + [0.0] * n + ([-v0_window] * n if fit_v0 else []))
+        upper = np.array([2.50] + [120_000.0] * n + ([v0_window] * n if fit_v0 else []))
     else:
-        x0 = np.array([a0, b0] + p0_list)
-        lower = np.array([0.10,  80.0] + [0.0]       * n)
-        upper = np.array([2.50, 220.0] + [120_000.0] * n)
+        x0    = np.array([a0, b0] + p0_list + ([0.0] * n if fit_v0 else []))
+        lower = np.array([0.10, 80.0] + [0.0] * n + ([-v0_window] * n if fit_v0 else []))
+        upper = np.array([2.50, 220.0] + [120_000.0] * n + ([v0_window] * n if fit_v0 else []))
 
     try:
         result = least_squares(
@@ -257,12 +267,14 @@ def fit_segments_pooled(
         return None
 
     if _beta is not None:
-        alpha = float(result.x[0])
-        beta  = _beta
-        P_mgus = result.x[1:]
+        alpha   = float(result.x[0])
+        beta    = _beta
+        P_mgus  = result.x[1 : 1 + n]
+        dv0s    = result.x[1 + n :] if fit_v0 else np.zeros(n)
     else:
         alpha, beta = float(result.x[0]), float(result.x[1])
-        P_mgus = result.x[2:]
+        P_mgus  = result.x[2 : 2 + n]
+        dv0s    = result.x[2 + n :] if fit_v0 else np.zeros(n)
 
     # Approximate parameter uncertainties from the Jacobian
     J = result.jac
@@ -272,19 +284,20 @@ def fit_segments_pooled(
         cov = np.linalg.inv(J.T @ J) * (result.cost / dof)
         perr = np.sqrt(np.abs(np.diag(cov)))
         if _beta is not None:
-            alpha_std = float(perr[0])
-            beta_std  = 0.0
-            P_mgu_stds = perr[1:].tolist()
+            alpha_std  = float(perr[0])
+            beta_std   = 0.0
+            P_mgu_stds = perr[1 : 1 + n].tolist()
         else:
             alpha_std, beta_std = float(perr[0]), float(perr[1])
-            P_mgu_stds = perr[2:].tolist()
+            P_mgu_stds = perr[2 : 2 + n].tolist()
     except np.linalg.LinAlgError:
         alpha_std = beta_std = float("nan")
         P_mgu_stds = [float("nan")] * n
 
     fit_results = []
     for i in range(n):
-        v_pred = v_model(t_list[i], alpha, beta, P_mgus[i], v0_list[i], m_list[i])
+        v0_i   = v0_list[i] + float(dv0s[i])
+        v_pred = v_model(t_list[i], alpha, beta, P_mgus[i], v0_i, m_list[i])
         ss_res = np.sum((v_list[i] - v_pred) ** 2)
         ss_tot = np.sum((v_list[i] - v_list[i].mean()) ** 2)
         r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
@@ -296,7 +309,7 @@ def fit_segments_pooled(
             beta_std=beta_std,
             P_mgu=float(P_mgus[i]),
             P_mgu_std=float(P_mgu_stds[i]),
-            v0=v0_list[i],
+            v0=v0_i,
             m=m_list[i],
             drs_open=drs_states[i],
             lap_number=lap_numbers[i],
