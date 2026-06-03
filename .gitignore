@@ -23,6 +23,9 @@ build/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
 
+# Reports — generated artifacts, keep source files only
+reports/*.pdf
+
 # Secrets / environment
 .env
 .env.*
