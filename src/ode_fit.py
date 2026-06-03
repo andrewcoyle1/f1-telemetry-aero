@@ -10,6 +10,14 @@ Model:  m·dv/dt = -α·v² - β - P_mgu/v
 Adding the P_mgu/v term separates genuine rolling resistance (β) from the
 speed-dependent energy-recovery braking that contaminates β in a two-parameter fit.
 The ODE has no closed-form solution so we integrate numerically.
+
+Note on engine braking: at throttle=0, the drivetrain applies additional retarding
+torque (compression, MGU-H harvest). This force is collinear with α in coast-down
+data — both α·v² and engine braking terms are speed-dependent — making them
+non-separable without external torque measurements. Engine braking is therefore
+absorbed into α, inflating the composite 2α/ρ by ~66% relative to expected CdA.
+The Durbin-Watson statistic of ~0.66 in the residuals reflects this model
+mis-specification and should be treated as a known systematic limitation.
 """
 
 from __future__ import annotations
