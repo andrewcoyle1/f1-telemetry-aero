@@ -1,0 +1,50 @@
+\section{Data \& Session Selection}
+\label{sec: Data & Session Selection}
+
+\subsection{Constructor and Circuit Survey}
+\label{sec: Constructor and Circuit Survey}
+
+Selecting circuits and a reference driver by hand risks confirmation bias: one might favour circuits already known to produce clean coast-down data. To avoid this, a fully automated survey is run across all 24 rounds of the 2024 Formula~1 calendar before any polar analysis is performed.
+
+For every circuit and every driver, two metrics are computed:
+\begin{itemize}
+    \item $n_\text{coast}$: number of free-practice (FP1+FP2+FP3) coast-down segments passing $R^2 \geq 0.90$.
+    \item $n_\text{CLA}$: number of qualifying push laps yielding a finite $C_LA$ estimate above a circuit-specific speed and lateral-$g$ threshold.
+\end{itemize}
+
+The joint score $n_\text{coast} + n_\text{CLA}$ is summed per constructor across all circuits and drivers. The constructor with the highest aggregate score is selected as the analysis subject. Results from all 24 circuits (480 driver-circuit rows) are saved to \texttt{scripts/survey\_results.csv} after each circuit so the run is resumable.
+
+\textbf{Survey outcome.} Aston Martin ranks first with a total score of 386, ahead of Mercedes (331) and Ferrari (325). Driver~14 (Alonso, AMR24) records the highest individual score at the majority of circuits.
+
+\subsection{Circuit Selection}
+\label{sec: Circuit Selection}
+
+From the survey, all driver-14 circuits satisfying $n_\text{coast} \geq 5$, $n_\text{CLA} \geq 4$, $C_LA \in [1.5, 4.5]$~m$^2$, and $\text{SE}_\text{median} < 0.30$~m$^2$ are retained as candidates. Eight circuits pass these filters; five are chosen to maximise $C_DA$ span and polar leverage. The three unselected circuits---Azerbaijan (2024, $C_LA = 1.98$~m$^2$), Australian (2024, $C_LA = 3.09$~m$^2$), and Spanish (2024, $C_LA = 3.88$~m$^2$)---fall within the $C_DA$ range already covered by Jeddah, Silverstone, and the Yas Marina--Suzuka pair respectively:
+
+\begin{table}[h]
+    \centering
+    \caption{Selected circuits for the five-point polar. $n_\text{coast}$ counts FP1--FP3 segments passing $R^2 \geq 0.90$; $n_\text{CLA}$ counts qualifying push laps with a valid $C_LA$ estimate; SE is the standard error of the $C_LA$ median.}
+    \label{tab: circuit selection}
+    \begin{tabularx}{\linewidth}{l c c C C c}
+        \toprule
+        Circuit & $n_\text{coast}$ & $n_\text{CLA}$ & $C_LA$~(m$^2$) & SE~(m$^2$) & Wing level \\
+        \midrule
+        Jeddah 2024      & 13 & 5 & 2.66 & 0.13 & low \\
+        Spa 2024         &  5 & 9 & 3.06 & 0.13 & medium-low \\
+        Silverstone 2024 & 10 & 6 & 3.14 & 0.19 & medium \\
+        Yas Marina 2024  &  6 & 6 & 3.53 & 0.15 & medium-high \\
+        Suzuka 2024      &  8 & 4 & 4.33 & 0.16 & high \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The same driver (14) is used at every circuit, eliminating any cross-driver confound.
+
+\subsection{Session Selection}
+\label{sec: Session Selection}
+
+\textbf{Coast-down (drag):} FP1, FP2, and FP3 are used. Race laps are excluded because MGU-K deployment varies lap-to-lap with strategy and tyre state changes more dramatically over longer stints.
+
+\textbf{$C_LA$ (downforce):} Qualifying only, filtered to push laps. A lap is classified as a push lap if it has no recorded pit-out or pit-in time and its lap time is within 110\% of the driver's own session best. This removes banker laps, cool-down laps, and aborted runs while retaining all genuine flying attempts. Qualifying push laps are the cleanest source of near-limit lateral-$g$ data: tyre temperatures are optimal, drivers are consistently at the friction ceiling, and lap counts are sufficient (4--9 per circuit after filtering; see Table~\ref{tab: circuit selection}).
+
+Circuit-specific lateral-$g$ and minimum-speed thresholds are tuned to select only the highest-loaded corner samples, where the friction model is most valid. At Jeddah (fast, low-lateral-$g$ layout) the thresholds are $2.5g$ and $150$~km/h; at high-downforce circuits such as Silverstone and Suzuka they are $3.5g$ and $180$~km/h.

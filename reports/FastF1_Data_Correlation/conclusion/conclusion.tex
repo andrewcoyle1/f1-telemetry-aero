@@ -1,0 +1,25 @@
+\section{Conclusion}
+
+The coast-down ODE method with GPS lat-g $C_LA$ estimation provides a robust framework for aerodynamic characterisation from public F1 telemetry. An automated 24-circuit survey (all 20 drivers, all 2024 rounds) identifies Aston Martin as the constructor with the highest joint coast-down and qualifying-$C_LA$ data quality. Driver~14 (Alonso, AMR24) is used consistently across all five circuits, eliminating the cross-driver confound present in earlier analyses. Key findings:
+
+\begin{itemize}
+    \item The five-circuit polar ($C_LA$ vs.\ $C_DA$; Jeddah, Spa, Silverstone, Yas Marina, Suzuka) yields an OLS slope of $+3.0$ (MC 90\% CI: $-2.3$ to $+6.0$~m$^2$/m$^2$; $1.08\,\sigma$ from zero). Yas Marina is a geometric outlier in the polar (highest $C_LA$ of the middle three circuits yet lowest $C_DA$ of all five); excluding it gives slope $= 4.80$ (MC 90\% CI: $-2.9$ to $+9.1$; $0.99\,\sigma$), consistent within uncertainty. In both fits the slope is positive---consistent with the expected physical relationship between wing drag and downforce---but the confidence interval includes zero. A precise aerodynamic efficiency cannot be stated with the available data.
+
+    \item $C_LA$ spans $2.66 \pm 0.42$~m$^2$ (Jeddah, low downforce) to $4.33 \pm 0.67$~m$^2$ (Suzuka, high downforce). Total $C_LA$ uncertainty is dominated by the $\mu = 1.8$ systematic ($\pm 0.4$--$0.65$~m$^2$), not GPS noise.
+
+    \item Composite $2\hat\alpha/\rho$ spans $1.386$~m$^2$ (Yas Marina) to $1.750$~m$^2$ (Suzuka), consistent with Suzuka running the highest wing level of any circuit in the set.
+
+    \item $C_{rr} \approx 0.014$ at all circuits. This equality is an artefact of the fixed $\beta = 120$~N prior, not an independent measurement; see \S\ref{sec: Coast Down ODE Model}.
+
+    \item The dominant uncertainty in the polar slope is the $\mu$ systematic. Because the same $\mu$ is applied at every circuit, a uniform $\mu$ error shifts the polar intercept without changing the slope. The residual concern is circuit-to-circuit $\mu$ variation (compound, track temperature, tyre age), which would rotate the polar and is not quantified.
+
+    \item DRS drag reduction is not isolatable from slipstream in race data. The combined DRS\,+\,slipstream trap speed delta is $11.9$~km/h; gap-stratified analysis reduces this to $10.1$~km/h but does not eliminate the confound.
+
+    \item Gear-stratified validation at Jeddah: gear-8-only $\hat\alpha = 0.867$ is within $1.1\%$ of the all-segment value of $0.876$ ($-1.0\%$, not statistically distinguishable from zero), ruling out a large engine-braking contribution.
+
+    \item Engine-braking contamination at Yas Marina (the geometric polar outlier) was not independently verified by gear-stratified falsification; the anomalous ordering of its $C_{DA}$ relative to its $C_{LA}$ remains a hypothesis.
+
+    \item Bootstrap $90\%$ CI on $\hat\alpha$ at Jeddah: $\pm 0.027$~N\,s$^2$/m$^2$ ($6.8\times$ the corrected Jacobian bound of $\pm 0.004$). The conservative $13\times$ scaling from re-evaluated Monza calibration is retained for the polar Monte Carlo. Residual Durbin--Watson autocorrelation ($\text{DW} \approx 0.55$) is attributed to aerodynamic pitch dynamics during coast-down.
+
+    \item The 2026 F1 timing API does not broadcast active aero state, blocking mode-split analysis until the channel is exposed.
+\end{itemize}

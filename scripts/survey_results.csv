@@ -1,0 +1,481 @@
+year,event,driver,team,n_coastdown,n_cla,cla_median,cla_se
+2024,Bahrain,1,Red Bull Racing,6,5,3.193,0.184
+2024,Bahrain,2,Williams,0,2,2.968,0.069
+2024,Bahrain,3,RB,0,4,2.997,0.169
+2024,Bahrain,4,McLaren,0,4,3.605,0.306
+2024,Bahrain,10,Alpine,0,3,3.055,0.193
+2024,Bahrain,11,Red Bull Racing,1,5,2.9,0.118
+2024,Bahrain,14,Aston Martin,9,4,3.115,0.339
+2024,Bahrain,16,Ferrari,0,6,3.083,0.265
+2024,Bahrain,18,Aston Martin,0,4,3.132,0.199
+2024,Bahrain,20,Haas F1 Team,1,4,3.439,0.355
+2024,Bahrain,22,RB,0,4,3.302,0.066
+2024,Bahrain,23,Williams,0,4,3.038,0.131
+2024,Bahrain,24,Kick Sauber,0,2,3.998,0.203
+2024,Bahrain,27,Haas F1 Team,2,6,2.826,0.181
+2024,Bahrain,31,Alpine,0,3,3.391,0.143
+2024,Bahrain,44,Mercedes,1,6,3.179,0.184
+2024,Bahrain,55,Ferrari,2,6,3.25,0.172
+2024,Bahrain,63,Mercedes,4,5,3.297,0.487
+2024,Bahrain,77,Kick Sauber,0,2,3.051,0.147
+2024,Bahrain,81,McLaren,1,6,3.177,0.184
+2024,Saudi Arabia,1,Red Bull Racing,0,6,2.614,0.094
+2024,Saudi Arabia,2,Williams,0,3,2.418,0.029
+2024,Saudi Arabia,3,RB,4,4,2.794,0.047
+2024,Saudi Arabia,4,McLaren,3,7,2.52,0.107
+2024,Saudi Arabia,10,Alpine,0,2,2.838,0.12
+2024,Saudi Arabia,11,Red Bull Racing,0,6,2.561,0.116
+2024,Saudi Arabia,14,Aston Martin,13,5,2.662,0.134
+2024,Saudi Arabia,16,Ferrari,0,7,2.595,0.11
+2024,Saudi Arabia,18,Aston Martin,3,5,2.688,0.105
+2024,Saudi Arabia,20,Haas F1 Team,0,4,2.527,0.091
+2024,Saudi Arabia,22,RB,0,6,2.688,0.059
+2024,Saudi Arabia,23,Williams,0,4,2.552,0.134
+2024,Saudi Arabia,24,Kick Sauber,0,0,,
+2024,Saudi Arabia,27,Haas F1 Team,1,3,2.568,0.077
+2024,Saudi Arabia,31,Alpine,0,3,2.671,0.2
+2024,Saudi Arabia,44,Mercedes,1,8,2.555,0.106
+2024,Saudi Arabia,55,Ferrari,0,0,,
+2024,Saudi Arabia,63,Mercedes,2,6,2.567,0.079
+2024,Saudi Arabia,77,Kick Sauber,0,3,2.758,0.095
+2024,Saudi Arabia,81,McLaren,0,8,2.631,0.09
+2024,Australian,1,Red Bull Racing,0,7,3.077,0.161
+2024,Australian,2,Williams,0,0,,
+2024,Australian,3,RB,0,2,3.713,0.428
+2024,Australian,4,McLaren,0,6,3.135,0.039
+2024,Australian,10,Alpine,0,3,3.094,0.14
+2024,Australian,11,Red Bull Racing,0,7,3.155,0.107
+2024,Australian,14,Aston Martin,5,6,3.093,0.247
+2024,Australian,16,Ferrari,0,6,3.367,0.179
+2024,Australian,18,Aston Martin,4,8,3.098,0.182
+2024,Australian,20,Haas F1 Team,0,4,3.609,0.297
+2024,Australian,22,RB,0,6,3.199,0.126
+2024,Australian,23,Williams,0,5,3.189,0.155
+2024,Australian,24,Kick Sauber,0,3,3.073,0.322
+2024,Australian,27,Haas F1 Team,0,3,3.187,0.154
+2024,Australian,31,Alpine,0,6,2.932,0.093
+2024,Australian,44,Mercedes,1,5,3.186,0.264
+2024,Australian,55,Ferrari,0,6,3.332,0.14
+2024,Australian,63,Mercedes,0,6,3.089,0.09
+2024,Australian,77,Kick Sauber,0,5,3.046,0.28
+2024,Australian,81,McLaren,0,5,3.081,0.23
+2024,Japanese,1,Red Bull Racing,3,4,3.734,0.23
+2024,Japanese,2,Williams,0,2,4.711,0.353
+2024,Japanese,4,McLaren,2,4,4.194,0.132
+2024,Japanese,10,Alpine,2,2,3.862,0.407
+2024,Japanese,11,Red Bull Racing,4,4,3.609,0.278
+2024,Japanese,14,Aston Martin,8,4,4.33,0.16
+2024,Japanese,16,Ferrari,0,4,3.979,0.196
+2024,Japanese,18,Aston Martin,3,2,3.921,0.074
+2024,Japanese,20,Haas F1 Team,2,2,3.538,0.163
+2024,Japanese,22,RB,0,6,4.139,0.201
+2024,Japanese,23,Williams,1,3,4.014,0.248
+2024,Japanese,24,Kick Sauber,1,2,4.537,0.215
+2024,Japanese,27,Haas F1 Team,4,4,3.997,0.266
+2024,Japanese,31,Alpine,1,4,4.006,0.28
+2024,Japanese,40,RB,0,0,,
+2024,Japanese,44,Mercedes,3,5,3.818,0.175
+2024,Japanese,55,Ferrari,1,4,4.442,0.236
+2024,Japanese,63,Mercedes,5,5,3.919,0.22
+2024,Japanese,77,Kick Sauber,0,4,3.923,0.192
+2024,Japanese,81,McLaren,1,4,3.866,0.463
+2024,Chinese,1,Red Bull Racing,0,6,3.628,0.121
+2024,Chinese,2,Williams,0,1,3.028,
+2024,Chinese,3,RB,0,4,3.797,0.139
+2024,Chinese,4,McLaren,0,5,3.706,0.271
+2024,Chinese,10,Alpine,0,5,3.406,0.092
+2024,Chinese,11,Red Bull Racing,0,6,3.562,0.078
+2024,Chinese,14,Aston Martin,3,5,3.267,0.2
+2024,Chinese,16,Ferrari,0,7,3.706,0.162
+2024,Chinese,18,Aston Martin,2,4,3.399,0.473
+2024,Chinese,20,Haas F1 Team,1,2,3.598,0.334
+2024,Chinese,22,RB,0,3,3.451,0.147
+2024,Chinese,23,Williams,0,4,3.424,0.125
+2024,Chinese,24,Kick Sauber,0,2,3.285,0.054
+2024,Chinese,27,Haas F1 Team,0,7,3.634,0.148
+2024,Chinese,31,Alpine,0,5,3.553,0.281
+2024,Chinese,44,Mercedes,0,2,3.297,0.3
+2024,Chinese,55,Ferrari,1,5,3.821,0.222
+2024,Chinese,63,Mercedes,0,6,3.338,0.183
+2024,Chinese,77,Kick Sauber,1,5,3.556,0.152
+2024,Chinese,81,McLaren,0,4,3.467,0.186
+2024,Miami,1,Red Bull Racing,0,6,2.996,0.098
+2024,Miami,2,Williams,0,2,3.168,0.234
+2024,Miami,3,RB,0,3,3.302,0.144
+2024,Miami,4,McLaren,1,7,2.891,0.125
+2024,Miami,10,Alpine,0,5,3.145,0.143
+2024,Miami,11,Red Bull Racing,0,6,3.233,0.077
+2024,Miami,14,Aston Martin,2,5,3.373,0.13
+2024,Miami,16,Ferrari,0,7,3.324,0.124
+2024,Miami,18,Aston Martin,1,5,3.232,0.112
+2024,Miami,20,Haas F1 Team,0,3,3.005,0.145
+2024,Miami,22,RB,0,7,3.285,0.158
+2024,Miami,23,Williams,0,4,3.167,0.192
+2024,Miami,24,Kick Sauber,2,3,3.22,0.009
+2024,Miami,27,Haas F1 Team,0,7,2.78,0.118
+2024,Miami,31,Alpine,0,5,3.19,0.136
+2024,Miami,44,Mercedes,0,7,3.139,0.083
+2024,Miami,55,Ferrari,0,7,2.751,0.176
+2024,Miami,63,Mercedes,0,7,3.087,0.226
+2024,Miami,77,Kick Sauber,1,2,3.527,0.153
+2024,Miami,81,McLaren,0,5,2.881,0.147
+2024,Emilia Romagna,1,Red Bull Racing,3,6,4.808,0.216
+2024,Emilia Romagna,2,Williams,0,2,3.118,0.649
+2024,Emilia Romagna,3,RB,1,5,5.379,0.272
+2024,Emilia Romagna,4,McLaren,1,6,4.259,0.312
+2024,Emilia Romagna,10,Alpine,5,4,4.56,0.41
+2024,Emilia Romagna,11,Red Bull Racing,0,3,3.514,0.692
+2024,Emilia Romagna,14,Aston Martin,1,1,3.878,
+2024,Emilia Romagna,16,Ferrari,1,7,5.19,0.332
+2024,Emilia Romagna,18,Aston Martin,7,5,4.5,0.412
+2024,Emilia Romagna,22,RB,3,5,4.134,0.441
+2024,Emilia Romagna,23,Williams,0,4,3.493,0.652
+2024,Emilia Romagna,24,Kick Sauber,0,2,4.899,0.995
+2024,Emilia Romagna,27,Haas F1 Team,4,7,3.377,0.511
+2024,Emilia Romagna,31,Alpine,1,5,4.178,0.395
+2024,Emilia Romagna,44,Mercedes,0,6,3.637,0.281
+2024,Emilia Romagna,50,Haas F1 Team,0,0,,
+2024,Emilia Romagna,55,Ferrari,0,6,4.61,0.298
+2024,Emilia Romagna,63,Mercedes,5,5,3.797,0.292
+2024,Emilia Romagna,77,Kick Sauber,0,2,3.116,0.032
+2024,Emilia Romagna,81,McLaren,1,4,3.966,0.373
+2024,Monaco,1,Red Bull Racing,0,9,2.146,0.101
+2024,Monaco,2,Williams,0,4,1.45,0.169
+2024,Monaco,3,RB,0,7,2.044,0.149
+2024,Monaco,4,McLaren,0,9,1.84,0.118
+2024,Monaco,10,Alpine,0,10,1.942,0.099
+2024,Monaco,11,Red Bull Racing,0,5,1.799,0.177
+2024,Monaco,14,Aston Martin,3,4,1.833,0.103
+2024,Monaco,16,Ferrari,0,10,2.104,0.169
+2024,Monaco,18,Aston Martin,2,6,2.123,0.19
+2024,Monaco,20,Haas F1 Team,1,6,1.989,0.102
+2024,Monaco,22,RB,0,9,2.161,0.187
+2024,Monaco,23,Williams,0,9,1.775,0.098
+2024,Monaco,24,Kick Sauber,0,4,1.464,0.1
+2024,Monaco,27,Haas F1 Team,0,7,1.978,0.105
+2024,Monaco,31,Alpine,0,6,2.05,0.114
+2024,Monaco,44,Mercedes,0,9,1.91,0.093
+2024,Monaco,55,Ferrari,0,8,1.864,0.112
+2024,Monaco,63,Mercedes,0,8,2.185,0.159
+2024,Monaco,77,Kick Sauber,0,4,1.817,0.206
+2024,Monaco,81,McLaren,1,8,1.738,0.12
+2024,Canadian,1,Red Bull Racing,0,8,2.623,0.587
+2024,Canadian,2,Williams,0,7,2.077,0.116
+2024,Canadian,3,RB,0,8,2.462,0.088
+2024,Canadian,4,McLaren,0,8,2.296,0.175
+2024,Canadian,10,Alpine,0,4,2.396,0.238
+2024,Canadian,11,Red Bull Racing,0,3,2.462,0.073
+2024,Canadian,14,Aston Martin,4,6,2.464,0.211
+2024,Canadian,16,Ferrari,0,8,2.426,0.224
+2024,Canadian,18,Aston Martin,1,9,2.473,0.123
+2024,Canadian,20,Haas F1 Team,0,5,2.472,0.273
+2024,Canadian,22,RB,0,8,2.509,0.149
+2024,Canadian,23,Williams,0,9,2.489,0.171
+2024,Canadian,24,Kick Sauber,0,4,2.416,0.594
+2024,Canadian,27,Haas F1 Team,0,4,2.837,0.218
+2024,Canadian,44,Mercedes,1,8,2.958,0.191
+2024,Canadian,55,Ferrari,0,6,2.887,0.147
+2024,Canadian,61,Alpine,0,0,,
+2024,Canadian,63,Mercedes,0,8,2.661,0.232
+2024,Canadian,77,Kick Sauber,0,3,2.32,0.163
+2024,Canadian,81,McLaren,0,10,2.6,0.148
+2024,Spanish,1,Red Bull Racing,1,4,3.653,0.13
+2024,Spanish,2,Williams,0,3,3.981,0.121
+2024,Spanish,3,RB,1,3,3.922,0.071
+2024,Spanish,4,McLaren,0,4,3.801,0.181
+2024,Spanish,10,Alpine,0,6,3.766,0.12
+2024,Spanish,11,Red Bull Racing,1,6,3.744,0.101
+2024,Spanish,14,Aston Martin,5,4,3.882,0.103
+2024,Spanish,16,Ferrari,0,4,3.744,0.059
+2024,Spanish,18,Aston Martin,9,3,3.713,0.149
+2024,Spanish,20,Haas F1 Team,2,2,4.424,0.51
+2024,Spanish,22,RB,1,3,4.158,0.132
+2024,Spanish,23,Williams,0,2,3.852,0.131
+2024,Spanish,24,Kick Sauber,0,5,3.906,0.114
+2024,Spanish,31,Alpine,0,6,3.571,0.141
+2024,Spanish,44,Mercedes,1,6,3.789,0.111
+2024,Spanish,50,Haas F1 Team,1,0,,
+2024,Spanish,55,Ferrari,3,4,3.739,0.244
+2024,Spanish,63,Mercedes,9,5,3.87,0.128
+2024,Spanish,77,Kick Sauber,1,4,3.84,0.082
+2024,Spanish,81,McLaren,3,4,3.91,0.089
+2024,Austrian,1,Red Bull Racing,0,6,5.432,0.27
+2024,Austrian,2,Williams,0,3,5.363,0.257
+2024,Austrian,3,RB,0,5,5.95,0.155
+2024,Austrian,4,McLaren,0,6,5.745,0.159
+2024,Austrian,10,Alpine,0,6,5.628,0.364
+2024,Austrian,11,Red Bull Racing,0,7,5.97,0.247
+2024,Austrian,14,Aston Martin,3,5,5.917,0.226
+2024,Austrian,16,Ferrari,0,6,5.529,0.221
+2024,Austrian,18,Aston Martin,1,3,6.202,0.152
+2024,Austrian,20,Haas F1 Team,0,5,5.632,0.169
+2024,Austrian,22,RB,0,5,6.266,0.19
+2024,Austrian,23,Williams,0,3,6.586,0.146
+2024,Austrian,24,Kick Sauber,0,3,5.917,0.377
+2024,Austrian,27,Haas F1 Team,0,7,6.542,0.391
+2024,Austrian,31,Alpine,0,8,5.775,0.164
+2024,Austrian,44,Mercedes,0,6,5.942,0.395
+2024,Austrian,55,Ferrari,0,6,5.842,0.225
+2024,Austrian,63,Mercedes,0,6,5.76,0.25
+2024,Austrian,77,Kick Sauber,0,3,5.919,0.081
+2024,Austrian,81,McLaren,0,5,5.63,0.188
+2024,British,1,Red Bull Racing,0,7,3.398,0.136
+2024,British,3,RB,6,6,2.908,0.23
+2024,British,4,McLaren,0,4,3.447,0.216
+2024,British,14,Aston Martin,10,6,3.137,0.192
+2024,British,16,Ferrari,0,5,3.251,0.087
+2024,British,18,Aston Martin,7,6,3.45,0.126
+2024,British,22,RB,0,5,3.14,0.149
+2024,British,23,Williams,0,6,3.246,0.157
+2024,British,24,Kick Sauber,0,6,3.333,0.187
+2024,British,27,Haas F1 Team,3,6,3.345,0.27
+2024,British,31,Alpine,2,5,3.377,0.3
+2024,British,37,Red Bull Racing,0,0,,
+2024,British,44,Mercedes,0,7,3.51,0.15
+2024,British,45,Williams,0,0,,
+2024,British,50,Haas F1 Team,0,0,,
+2024,British,55,Ferrari,1,7,3.472,0.181
+2024,British,61,Alpine,0,0,,
+2024,British,63,Mercedes,0,8,3.347,0.138
+2024,British,77,Kick Sauber,0,3,2.659,0.109
+2024,British,81,McLaren,0,6,3.336,0.191
+2024,Hungarian,1,Red Bull Racing,3,7,4.055,0.196
+2024,Hungarian,2,Williams,0,4,4.208,0.122
+2024,Hungarian,3,RB,1,6,4.616,0.264
+2024,Hungarian,4,McLaren,0,6,3.998,0.143
+2024,Hungarian,10,Alpine,0,2,4.384,0.283
+2024,Hungarian,11,Red Bull Racing,0,2,4.203,0.101
+2024,Hungarian,14,Aston Martin,3,5,5.178,0.345
+2024,Hungarian,16,Ferrari,0,7,4.084,0.22
+2024,Hungarian,18,Aston Martin,0,6,4.247,0.215
+2024,Hungarian,20,Haas F1 Team,0,5,4.515,0.243
+2024,Hungarian,22,RB,0,6,4.457,0.367
+2024,Hungarian,23,Williams,0,6,4.726,0.257
+2024,Hungarian,24,Kick Sauber,0,4,4.042,0.091
+2024,Hungarian,31,Alpine,0,2,4.085,0.052
+2024,Hungarian,44,Mercedes,1,8,4.212,0.126
+2024,Hungarian,50,Haas F1 Team,0,0,,
+2024,Hungarian,55,Ferrari,4,7,4.362,0.286
+2024,Hungarian,63,Mercedes,5,3,4.052,0.07
+2024,Hungarian,77,Kick Sauber,0,6,4.36,0.38
+2024,Hungarian,81,McLaren,0,6,4.92,0.313
+2024,Belgian,1,Red Bull Racing,0,7,2.88,0.092
+2024,Belgian,2,Williams,0,3,2.817,0.126
+2024,Belgian,3,RB,0,5,3.033,0.16
+2024,Belgian,4,McLaren,1,9,2.991,0.139
+2024,Belgian,10,Alpine,1,7,2.904,0.135
+2024,Belgian,11,Red Bull Racing,0,6,2.736,0.172
+2024,Belgian,14,Aston Martin,5,9,3.064,0.129
+2024,Belgian,16,Ferrari,1,8,2.972,0.15
+2024,Belgian,18,Aston Martin,1,7,2.771,0.281
+2024,Belgian,20,Haas F1 Team,0,4,2.899,0.118
+2024,Belgian,22,RB,0,3,3.358,0.184
+2024,Belgian,23,Williams,0,6,2.741,0.215
+2024,Belgian,24,Kick Sauber,0,4,2.668,0.108
+2024,Belgian,27,Haas F1 Team,1,3,3.269,0.343
+2024,Belgian,31,Alpine,0,9,2.989,0.099
+2024,Belgian,44,Mercedes,0,8,3.226,0.111
+2024,Belgian,55,Ferrari,0,9,2.98,0.075
+2024,Belgian,63,Mercedes,0,8,2.948,0.075
+2024,Belgian,77,Kick Sauber,0,6,2.67,0.182
+2024,Belgian,81,McLaren,0,9,2.851,0.113
+2024,Dutch,1,Red Bull Racing,0,4,4.275,0.218
+2024,Dutch,2,Williams,0,0,,
+2024,Dutch,3,RB,0,3,4.433,0.292
+2024,Dutch,4,McLaren,0,4,4.326,0.055
+2024,Dutch,10,Alpine,0,6,4.772,0.187
+2024,Dutch,11,Red Bull Racing,0,5,4.237,0.26
+2024,Dutch,14,Aston Martin,2,5,4.198,0.248
+2024,Dutch,16,Ferrari,0,8,4.413,0.14
+2024,Dutch,18,Aston Martin,1,6,4.323,0.114
+2024,Dutch,20,Haas F1 Team,0,5,4.382,0.247
+2024,Dutch,22,RB,0,5,4.678,0.08
+2024,Dutch,23,Williams,0,6,4.616,0.134
+2024,Dutch,24,Kick Sauber,0,3,4.442,0.205
+2024,Dutch,27,Haas F1 Team,0,6,4.726,0.264
+2024,Dutch,31,Alpine,0,3,4.188,0.274
+2024,Dutch,44,Mercedes,1,4,4.575,0.139
+2024,Dutch,55,Ferrari,0,6,4.44,0.138
+2024,Dutch,63,Mercedes,0,6,4.423,0.15
+2024,Dutch,81,McLaren,0,5,4.347,0.229
+2024,Dutch,97,Kick Sauber,0,0,,
+2024,Italian,1,Red Bull Racing,8,6,2.636,0.153
+2024,Italian,3,RB,4,4,2.377,0.193
+2024,Italian,4,McLaren,1,4,2.187,0.358
+2024,Italian,10,Alpine,0,4,2.771,0.429
+2024,Italian,11,Red Bull Racing,1,5,2.435,0.238
+2024,Italian,12,Mercedes,0,0,,
+2024,Italian,14,Aston Martin,14,3,3.649,0.435
+2024,Italian,16,Ferrari,5,7,2.933,0.211
+2024,Italian,18,Aston Martin,3,2,2.741,0.286
+2024,Italian,20,Haas F1 Team,3,3,2.54,0.355
+2024,Italian,22,RB,0,2,3.028,0.754
+2024,Italian,23,Williams,0,6,2.396,0.225
+2024,Italian,24,Kick Sauber,0,3,2.365,0.353
+2024,Italian,27,Haas F1 Team,7,6,2.79,0.153
+2024,Italian,31,Alpine,0,4,2.914,0.126
+2024,Italian,43,Williams,0,2,2.243,0.081
+2024,Italian,44,Mercedes,8,6,2.583,0.155
+2024,Italian,55,Ferrari,6,6,2.875,0.291
+2024,Italian,77,Kick Sauber,1,2,2.677,0.246
+2024,Italian,81,McLaren,1,6,2.824,0.29
+2024,Azerbaijan,1,Red Bull Racing,0,7,1.842,0.05
+2024,Azerbaijan,3,RB,0,3,1.964,0.099
+2024,Azerbaijan,4,McLaren,2,2,1.649,0.017
+2024,Azerbaijan,10,Alpine,1,5,1.632,0.132
+2024,Azerbaijan,11,Red Bull Racing,0,5,2.09,0.173
+2024,Azerbaijan,14,Aston Martin,6,6,1.984,0.14
+2024,Azerbaijan,16,Ferrari,1,6,1.807,0.074
+2024,Azerbaijan,18,Aston Martin,4,5,1.715,0.367
+2024,Azerbaijan,22,RB,1,6,1.688,0.08
+2024,Azerbaijan,23,Williams,0,6,1.802,0.133
+2024,Azerbaijan,24,Kick Sauber,0,4,1.868,0.171
+2024,Azerbaijan,27,Haas F1 Team,1,5,1.75,0.102
+2024,Azerbaijan,31,Alpine,0,2,1.55,0.01
+2024,Azerbaijan,43,Williams,0,7,1.682,0.086
+2024,Azerbaijan,44,Mercedes,0,7,1.925,0.136
+2024,Azerbaijan,50,Haas F1 Team,0,5,1.738,0.158
+2024,Azerbaijan,55,Ferrari,0,6,1.789,0.07
+2024,Azerbaijan,63,Mercedes,1,6,1.675,0.122
+2024,Azerbaijan,77,Kick Sauber,1,2,1.969,0.159
+2024,Azerbaijan,81,McLaren,0,6,1.634,0.126
+2024,Singapore,1,Red Bull Racing,1,6,4.837,0.376
+2024,Singapore,3,RB,1,2,3.413,0.103
+2024,Singapore,4,McLaren,0,4,3.919,0.407
+2024,Singapore,10,Alpine,0,3,3.463,0.189
+2024,Singapore,11,Red Bull Racing,0,5,3.446,0.325
+2024,Singapore,14,Aston Martin,3,5,2.196,0.406
+2024,Singapore,16,Ferrari,0,5,4.131,0.529
+2024,Singapore,18,Aston Martin,1,2,2.818,0.493
+2024,Singapore,20,Haas F1 Team,0,4,3.379,0.234
+2024,Singapore,22,RB,0,5,4.021,0.151
+2024,Singapore,23,Williams,0,4,3.504,0.252
+2024,Singapore,24,Kick Sauber,0,3,2.919,0.382
+2024,Singapore,27,Haas F1 Team,0,6,3.286,0.184
+2024,Singapore,31,Alpine,0,5,3.729,0.297
+2024,Singapore,43,Williams,0,4,3.182,0.31
+2024,Singapore,44,Mercedes,0,4,4.19,0.271
+2024,Singapore,55,Ferrari,0,5,3.894,0.183
+2024,Singapore,63,Mercedes,0,5,3.694,0.212
+2024,Singapore,77,Kick Sauber,0,3,3.325,0.283
+2024,Singapore,81,McLaren,0,6,3.591,0.296
+2024,United States,1,Red Bull Racing,0,5,3.335,0.15
+2024,United States,4,McLaren,0,4,3.498,0.2
+2024,United States,10,Alpine,0,6,3.421,0.148
+2024,United States,11,Red Bull Racing,0,5,3.721,0.066
+2024,United States,14,Aston Martin,1,6,3.542,0.086
+2024,United States,16,Ferrari,1,6,3.778,0.119
+2024,United States,18,Aston Martin,0,4,3.537,0.149
+2024,United States,20,Haas F1 Team,1,5,3.49,0.185
+2024,United States,22,RB,0,4,3.561,0.118
+2024,United States,23,Williams,0,2,3.665,0.237
+2024,United States,24,Kick Sauber,0,3,3.485,0.068
+2024,United States,27,Haas F1 Team,1,4,3.644,0.23
+2024,United States,30,RB,0,2,3.971,0.236
+2024,United States,31,Alpine,0,5,3.557,0.129
+2024,United States,43,Williams,0,1,3.617,
+2024,United States,44,Mercedes,1,2,3.288,0.267
+2024,United States,55,Ferrari,2,5,3.37,0.027
+2024,United States,63,Mercedes,1,4,3.538,0.132
+2024,United States,77,Kick Sauber,0,3,3.254,0.102
+2024,United States,81,McLaren,0,5,3.438,0.155
+2024,Mexico City,1,Red Bull Racing,1,6,3.802,0.278
+2024,Mexico City,10,Alpine,3,5,3.678,0.508
+2024,Mexico City,11,Red Bull Racing,0,3,3.276,0.799
+2024,Mexico City,12,Mercedes,0,0,,
+2024,Mexico City,18,Aston Martin,4,4,4.339,0.331
+2024,Mexico City,20,Haas F1 Team,4,6,3.625,0.243
+2024,Mexico City,22,RB,0,3,4.802,1.627
+2024,Mexico City,23,Williams,0,5,3.629,0.368
+2024,Mexico City,27,Haas F1 Team,0,6,3.887,0.278
+2024,Mexico City,29,McLaren,0,0,,
+2024,Mexico City,30,RB,2,3,4.843,0.773
+2024,Mexico City,31,Alpine,0,3,3.568,0.186
+2024,Mexico City,34,Aston Martin,0,0,,
+2024,Mexico City,38,Ferrari,0,0,,
+2024,Mexico City,43,Williams,0,2,4.005,0.177
+2024,Mexico City,55,Ferrari,4,7,4.311,0.388
+2024,Mexico City,63,Mercedes,1,5,3.181,0.587
+2024,Mexico City,77,Kick Sauber,0,4,3.426,0.44
+2024,Mexico City,81,McLaren,0,3,3.856,0.38
+2024,Mexico City,97,Kick Sauber,0,0,,
+2024,São Paulo,1,Red Bull Racing,0,3,2.861,0.258
+2024,São Paulo,4,McLaren,0,7,3.441,0.36
+2024,São Paulo,10,Alpine,0,3,3.093,0.598
+2024,São Paulo,11,Red Bull Racing,0,4,2.197,0.096
+2024,São Paulo,14,Aston Martin,3,3,3.13,0.333
+2024,São Paulo,16,Ferrari,0,3,4.308,0.889
+2024,São Paulo,18,Aston Martin,0,4,2.946,0.572
+2024,São Paulo,22,RB,0,4,3.261,0.221
+2024,São Paulo,23,Williams,0,3,2.939,0.479
+2024,São Paulo,24,Kick Sauber,0,1,1.929,
+2024,São Paulo,27,Haas F1 Team,0,0,,
+2024,São Paulo,30,RB,0,4,3.509,0.394
+2024,São Paulo,31,Alpine,0,7,3.24,0.307
+2024,São Paulo,43,Williams,0,1,4.556,
+2024,São Paulo,44,Mercedes,0,3,2.301,0.79
+2024,São Paulo,50,Haas F1 Team,0,0,,
+2024,São Paulo,55,Ferrari,0,2,4.268,0.055
+2024,São Paulo,63,Mercedes,1,5,3.585,0.28
+2024,São Paulo,77,Kick Sauber,0,2,4.01,0.864
+2024,São Paulo,81,McLaren,0,8,3.133,0.268
+2024,Las Vegas,1,Red Bull Racing,1,8,1.733,0.067
+2024,Las Vegas,4,McLaren,1,6,2.027,0.104
+2024,Las Vegas,10,Alpine,0,7,1.915,0.093
+2024,Las Vegas,11,Red Bull Racing,0,4,1.65,0.06
+2024,Las Vegas,14,Aston Martin,3,2,1.973,0.043
+2024,Las Vegas,16,Ferrari,0,7,1.839,0.095
+2024,Las Vegas,18,Aston Martin,1,1,2.192,
+2024,Las Vegas,20,Haas F1 Team,0,3,1.829,0.198
+2024,Las Vegas,22,RB,0,7,1.74,0.067
+2024,Las Vegas,23,Williams,0,3,1.704,0.103
+2024,Las Vegas,24,Kick Sauber,0,6,1.782,0.086
+2024,Las Vegas,27,Haas F1 Team,0,5,1.689,0.092
+2024,Las Vegas,30,RB,0,4,1.608,0.073
+2024,Las Vegas,31,Alpine,1,5,1.786,0.115
+2024,Las Vegas,43,Williams,0,4,1.819,0.142
+2024,Las Vegas,44,Mercedes,0,7,1.777,0.046
+2024,Las Vegas,55,Ferrari,0,7,1.807,0.086
+2024,Las Vegas,63,Mercedes,0,8,1.861,0.094
+2024,Las Vegas,77,Kick Sauber,0,4,1.673,0.128
+2024,Las Vegas,81,McLaren,0,6,1.762,0.065
+2024,Qatar,1,Red Bull Racing,1,7,3.867,0.213
+2024,Qatar,4,McLaren,0,6,3.839,0.289
+2024,Qatar,10,Alpine,1,4,3.821,0.202
+2024,Qatar,11,Red Bull Racing,0,6,3.851,0.105
+2024,Qatar,14,Aston Martin,2,5,3.673,0.154
+2024,Qatar,16,Ferrari,3,9,4.281,0.092
+2024,Qatar,18,Aston Martin,2,4,3.99,0.153
+2024,Qatar,20,Haas F1 Team,0,8,3.925,0.043
+2024,Qatar,22,RB,0,5,4.056,0.133
+2024,Qatar,23,Williams,0,3,4.16,0.132
+2024,Qatar,24,Kick Sauber,0,6,3.926,0.125
+2024,Qatar,27,Haas F1 Team,1,3,3.519,0.104
+2024,Qatar,30,RB,0,3,4.124,0.04
+2024,Qatar,31,Alpine,0,2,3.57,0.019
+2024,Qatar,43,Williams,0,3,3.554,0.157
+2024,Qatar,44,Mercedes,1,8,3.987,0.126
+2024,Qatar,55,Ferrari,6,8,4.073,0.123
+2024,Qatar,63,Mercedes,4,8,4.16,0.087
+2024,Qatar,77,Kick Sauber,0,6,4.194,0.127
+2024,Qatar,81,McLaren,1,6,3.911,0.151
+2024,Abu Dhabi,4,McLaren,2,4,3.541,0.204
+2024,Abu Dhabi,10,Alpine,0,6,3.863,0.213
+2024,Abu Dhabi,11,Red Bull Racing,0,6,3.403,0.099
+2024,Abu Dhabi,14,Aston Martin,6,6,3.531,0.155
+2024,Abu Dhabi,16,Ferrari,3,4,3.978,0.061
+2024,Abu Dhabi,20,Haas F1 Team,1,3,3.355,0.202
+2024,Abu Dhabi,24,Kick Sauber,1,2,3.664,0.276
+2024,Abu Dhabi,27,Haas F1 Team,1,5,3.76,0.126
+2024,Abu Dhabi,28,McLaren,0,0,,
+2024,Abu Dhabi,30,RB,0,4,3.707,0.116
+2024,Abu Dhabi,34,Aston Martin,0,0,,
+2024,Abu Dhabi,37,Red Bull Racing,0,0,,
+2024,Abu Dhabi,39,Ferrari,0,0,,
+2024,Abu Dhabi,40,RB,0,0,,
+2024,Abu Dhabi,43,Williams,0,2,3.792,0.205
+2024,Abu Dhabi,44,Mercedes,0,2,3.711,0.244
+2024,Abu Dhabi,46,Williams,0,0,,
+2024,Abu Dhabi,61,Alpine,0,2,3.586,0.011
+2024,Abu Dhabi,63,Mercedes,0,6,3.941,0.172
+2024,Abu Dhabi,77,Kick Sauber,0,5,3.816,0.074

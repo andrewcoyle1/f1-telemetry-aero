@@ -1,0 +1,286 @@
+\section{Methodology} % [0.5 page]
+\label{sec: Methodology}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+    >=latex,
+    every node/.style={font=\small},
+    box/.style={draw=gray!55, rounded corners=3pt, fill=gray!8,
+                minimum width=2.2cm, minimum height=0.65cm,
+                align=center, inner sep=4pt},
+    hibox/.style={draw=accent_colour!70, rounded corners=3pt, fill=accent_colour!10,
+                minimum width=1.6cm, minimum height=0.65cm,
+                align=center, inner sep=4pt},
+    arr/.style={->, thick, gray!55!black},
+    lbl/.style={font=\footnotesize, gray!55!black},
+]
+\node[box] (fp)    at (0,     0.75) {FP1--FP3};
+\node[box] (q)     at (0,    -0.75) {qualifying};
+\node[box] (seg)   at (3.1,   0.75) {segment\\extraction};
+\node[box] (gps)   at (3.1,  -0.75) {GPS lat-$g$};
+\node[box] (ode)   at (6.4,   0.75) {pooled ODE fit};
+\node[box] (cla)   at (6.4,  -0.75) {$C_{LA}$ estimate};
+\node[hibox] (cda)  at (9.5,   0)    {$C_{DA}$};
+\node[hibox] (polar)at (11.7,  0)    {aero polar};
+
+\draw[arr] (fp)  -- (seg);
+\draw[arr] (seg) -- (ode);
+\draw[arr] (ode) -- (cda);
+\draw[arr] (q)   -- (gps);
+\draw[arr] (gps) -- (cla);
+\draw[arr] (cla) -- (cda);
+\draw[arr] (cda) -- (polar);
+
+\node[lbl, left=0.1cm of fp] {FP data:};
+\node[lbl, left=0.1cm of q]  {Qual.\ data:};
+\end{tikzpicture}
+\caption{Analysis pipeline. Free-practice telemetry supplies coast-down segments for the pooled ODE fit ($\hat\alpha$); qualifying telemetry supplies GPS lat-$g$ data for $C_{LA}$. Both streams combine per circuit to yield $C_{DA}$, which populates the aero polar.}
+\label{fig: data pipeline}
+\end{figure}
+
+\subsection{Coast Down ODE Model}
+\label{sec: Coast Down ODE Model}
+
+During free-deceleration phases (throttle < 5\%, brake = 0), the longitudinal equation of motion reduces to:
+
+\begin{equation}
+    m \cdot \frac{dv}{dt} = -\alpha \cdot v^2 - \beta - P_{mgu} / v
+\end{equation}
+
+where $\alpha = \frac{1}{2} \rho (C_DA + C_{rr}\cdot C_LA)$ is the aerodynamic coefficient ($\text{N}\cdot\text{s}^2/\text{m}^2$), $\beta = C_{rr}\cdot m\cdot g$ is rolling resistance ($N$), and $P_{mgu}$ is MGU-K harvest power modelled as a constant-power retarding term ($W$). The $P_{mgu}/v$ term is critical: without it, energy recovery appears as inflated rolling resistance and the fitted $C_{rr}$ is unphysically high. Including it yields $\beta = 120 N$ and $P_{mgu} = 0-53 kW$, consistent with the FIA-regulated MGU-K harvest ceiling of 120\,kW and with coast-down conditions under which the unit operates below peak harvest capacity.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=latex, every node/.style={font=\small}]
+
+    % ── Car asset (side view, nose right, rear wing left) ────────────────────
+    % Image is ~4:1 aspect; place at y=0, width=5cm so height≈1.25cm
+    \node[anchor=south west, inner sep=0] (car) at (0, 0)
+        {\includegraphics[width=5cm]{Methodology/Figures/car_side.pdf}};
+
+    % ── Velocity arrow ───────────────────────────────────────────────────────
+    \draw[->, line width=2.0pt, color=accent_colour]
+        (5.3, 0.6) -- (6.4, 0.6) node[right] {$v$};
+
+    % ── Retarding force arrows (pointing left, opposing motion) ──────────────
+    % Origins on the left (rear) edge of the car image at x=0
+    % Aerodynamic drag — longest
+    \draw[->, line width=1.5pt, red!65!black]
+        (0, 1.6) -- (-3.8, 1.6) node[left] {$\alpha v^2$};
+    \node[above, font=\footnotesize, gray!50!black] at (-1.9, 1.6)
+        {aerodynamic drag};
+
+    % MGU-K harvest — medium
+    \draw[->, line width=1.5pt, violet!75!black]
+        (0, 0.9) -- (-2.3, 0.9) node[left] {$P_\mathrm{mgu}/v$};
+    \node[above, font=\footnotesize, gray!50!black] at (-1.15, 0.9)
+        {MGU-K harvest};
+
+    % Rolling resistance — shortest
+    \draw[->, line width=1.5pt, orange!75!black]
+        (0, 0.15) -- (-1.1, 0.15) node[left] {$\beta$};
+    \node[below, font=\footnotesize, gray!50!black] at (-0.55, 0.15)
+        {rolling resistance};
+
+\end{tikzpicture}
+\caption{Retarding forces acting on the AMR24 during a coast-down phase (throttle $<5\%$, brake $=0$). Arrow lengths are proportional to typical magnitudes at $v \approx 80$~m/s: aerodynamic drag ($\alpha v^2$) dominates, MGU-K harvest ($P_\mathrm{mgu}/v$) is secondary, and rolling resistance ($\beta$) is smallest. All three oppose the direction of travel $v$. Car silhouette by Ali Co\c{s}kun, The Noun Project.}
+\label{fig: coast-down force diagram}
+\end{figure}
+
+Vehicle mass is modelled on a per-segment basis as:
+\begin{equation}
+    m = m_\text{car} + \max\!\left(0,\; m_{\text{fuel},0} - \dot{m}_\text{fuel}\cdot n_\text{lap}\right)
+\end{equation}
+where $m_\text{car} = 798$~kg is the 2024 FIA minimum weight (Art.~4.1), which \emph{already includes the driver} (the regulation counts driver $+$ seat $\geq 80$~kg within the 798~kg limit). The fuel model is the only variable term: $m_{\text{fuel},0} = 95$~kg (initial FP fuel load) and $\dot{m}_\text{fuel} = 1.8$~kg/lap. This gives $m \approx 840$--$890$~kg across a typical free-practice stint. An earlier version of this analysis erroneously added a separate driver mass term, which would have inflated absolute $C_DA$ by $\sim\!9\%$; that error has been corrected --- see \S\ref{sec: Absolute CDA Interpretation}. The same per-lap mass model is used in the $C_LA$ estimate (\S\ref{sec: ClLA from GPS Lateral Acceleration}) and the DRS energy balance (\S\ref{sec: Methodology; DRS Drag Delta}).
+
+Segments are extracted in two stages. The state machine first groups all contiguous samples satisfying the throttle and brake conditions with entry speed above 120~km/h and duration above 0.5~s; this produces a candidate pool. A second filter then discards any candidate whose entry speed is below 180~km/h (50~m/s) or whose total speed drop is below 25~m/s, yielding the segments used for fitting. The speed-drop requirement ensures the $\alpha v^2$ and $P_\text{mgu}/v$ terms have distinguishable shapes across the segment, which is necessary for reliable parameter separation.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=latex, every node/.style={font=\small}]
+
+% ── Axes ──────────────────────────────────────────────────────────────────
+\draw[->, gray!60] (0, 0) -- (11.0, 0) node[right] {time};
+\draw[->, gray!60] (0, 0) -- (0, 4.6)  node[above] {speed (km/h)};
+\foreach \y/\lbl in {1.5/100, 3.0/200, 4.5/300} {
+    \draw[gray!40, thin] (-0.08, \y) -- (0, \y);
+    \node[left, font=\footnotesize] at (-0.1, \y) {\lbl};
+}
+
+% ── 180 km/h entry-speed threshold ────────────────────────────────────────
+\draw[dashed, gray!45, thin] (0, 2.7) -- (10.6, 2.7);
+\node[right, font=\footnotesize, gray!55!black] at (10.6, 2.7) {$180$~km/h};
+
+% ── Shaded valid-segment regions ──────────────────────────────────────────
+\fill[accent_colour!12] (1.8, 0) rectangle (4.6, 4.6);
+\fill[accent_colour!12] (6.8, 0) rectangle (9.4, 4.6);
+
+% ── Speed trace ───────────────────────────────────────────────────────────
+\draw[thick, gray!25!black]
+    (0, 1.8) .. controls (0.5, 2.2) and (1.2, 3.3) .. (1.8, 3.75);
+\draw[thick, gray!25!black]   % coast-down segment 1
+    (1.8, 3.75) .. controls (2.5, 3.5) and (3.8, 2.4) .. (4.6, 1.85);
+\draw[thick, gray!25!black]
+    (4.6, 1.85) .. controls (4.9, 1.4) and (5.2, 0.85) .. (5.4, 0.7);
+\draw[thick, gray!25!black]
+    (5.4, 0.7) .. controls (5.6, 0.65) and (5.8, 0.75) .. (6.1, 1.0);
+\draw[thick, gray!25!black]
+    (6.1, 1.0) .. controls (6.4, 1.7) and (6.6, 2.9) .. (6.8, 3.8);
+\draw[thick, gray!25!black]   % coast-down segment 2
+    (6.8, 3.8) .. controls (7.5, 3.6) and (8.9, 2.8) .. (9.4, 2.2);
+\draw[thick, gray!25!black]
+    (9.4, 2.2) .. controls (9.7, 1.7) and (10.1, 1.1) .. (10.3, 0.8);
+
+% ── Segment labels ────────────────────────────────────────────────────────
+\node[above, accent_colour!80!black, font=\footnotesize\bfseries]
+    at (3.2, 4.4) {segment 1};
+\node[above, accent_colour!80!black, font=\footnotesize\bfseries]
+    at (8.1, 4.4) {segment 2};
+
+% ── Entry speed annotation (segment 1) ───────────────────────────────────
+\draw[->, thin, gray!50!black] (1.5, 3.75) -- (1.5, 2.75);
+\node[left, font=\footnotesize, gray!50!black, align=right] at (1.5, 3.2)
+    {$v_0{>}180$~km/h};
+
+% ── Speed drop annotation (segment 1) ────────────────────────────────────
+\draw[<->, thin, gray!50!black] (4.85, 1.85) -- (4.85, 3.75);
+\node[right, font=\footnotesize, gray!50!black] at (4.85, 2.8)
+    {$\Delta v {>} 25$~m/s};
+
+% ── Condition labels inside segments ─────────────────────────────────────
+\node[font=\footnotesize\itshape, gray!55!black, rotate=90]
+    at (3.2, 1.0) {throttle $<5\%$,\ brake $=0$};
+\node[font=\footnotesize\itshape, gray!55!black, rotate=90]
+    at (8.1, 1.0) {throttle $<5\%$,\ brake $=0$};
+
+\end{tikzpicture}
+\caption{Schematic speed trace illustrating two-stage segment extraction. Shaded regions mark coast-down candidates (throttle $<5\%$, brake $=0$); only those with entry speed $v_0>180$~km/h and speed drop $\Delta v>25$~m/s are retained for the ODE fit.}
+\label{fig: segment extraction}
+\end{figure}
+
+The ODE is integrated numerically using scipy.\allowbreak integrate.\allowbreak odeint and fitted via scipy.\allowbreak optimize.\allowbreak curve\_fit\cite{SciPy_Algorithms} with beta fixed at its prior median $(120 N)$. This two-parameter fit $(alpha, P_{mgu})$ is more tractable than the unconstrained three-parameter version and avoids correlation between beta and alpha in short segments. The prior $\beta = 120$~N is set from a free three-parameter pilot fit across early segments. The implied rolling resistance coefficient, $C_{rr} = \beta/(mg) = 120/(855 \times 9.81) \approx 0.0143$, is physically consistent with stiff-sidewall slick compounds at elevated carcass temperatures; full discussion of the $C_{rr}$ plausibility and the ill-conditioning of the free three-parameter fit is deferred to \S\ref{sec: Absolute CDA Interpretation}. (Holding $\beta$ fixed while the absolute force is physical means $C_{rr} = \beta/(mg)$ rises slightly relative to a heavier mass assumption.)
+
+\begin{figure}[h]
+    \centering
+    \input{Methodology/Figures/02_fit_quality.pgf}
+    \caption[ODE coast-down model fit for four sample segments (driver 14, AMR24). Orange line shows the numerically integrated model; blue dots show measured speed. R2 values exceed 0.99 for all shown segments.]{ODE coast-down model fit for four illustrative segments (driver~14, AMR24). Orange line: numerically integrated ODE model; blue dots: measured speed. $R^2$ values exceed $0.99$ for all shown segments.}
+    \label{fig: ODE coast-down model fit}
+\end{figure}
+
+\subsection{Pooled Fitting}
+\label{sec: Pooled Fitting}
+
+Individual segment fits are noisy. Since alpha and beta are physical constants of the car setup for a given session, they are shared across all $N$ segments in a pooled fit. With $\beta$ fixed at its prior median (120~N), this reduces the parameter count from $2N$ to $N+1$ (shared $\alpha$, per-segment $P_{mgu}$), and tightens the alpha uncertainty by roughly $\sqrt{N}$. In the unconstrained three-parameter case ($\alpha$, $\beta$, $P_{mgu}$ all free), the parameter count would reduce from $3N$ to $N+2$ (shared $\alpha$, shared $\beta$, per-segment $P_{mgu}$). In the actual implementation, per-segment initial-speed offsets $\delta v_0$ are also fitted, bringing the count to $2N+1$ (shared $\alpha$, per-segment $P_{mgu}$, per-segment $\delta v_0$). Individual segment fits also apply a post-optimisation physical guard ($0.2 < \hat\alpha < 1.8$~N\,s$^2$/m$^2$), tighter than the optimisation bounds ($0.10$--$2.50$), to discard physically unreasonable solutions before they enter the seed pool.
+
+No equivalent guard is applied in the pooled fit, where the shared $\hat\alpha$ is constrained by all segments simultaneously and unphysical values are unlikely to converge. The pooled fit uses scipy.\allowbreak optimize.\allowbreak least\_squares\cite{SciPy_Algorithms} with TRF method, warm-started from per-segment medians. 
+
+A per-segment initial-speed offset ($\delta v_0 \in [-3, +3]$~m/s) is also fitted to absorb speed-sensor noise at the start of each segment. This improves mean Durbin--Watson from 0.35 to 0.55 with negligible effect on $\hat{\alpha}$ ($<0.3\%$), and the per-segment offsets average $0.52$~m/s (max $1.85$~m/s), consistent with $\sim\!20$~Hz effective GPS/car-data sampling. Note that DW$\,=0.55$ still indicates substantial positive residual autocorrelation; the improvement reduces initial-condition noise but does not resolve the structural model limitation discussed in \S\ref{sec: Absolute CDA Interpretation}.
+
+\subsection[CLA from GPS Lateral Acceleration]{$C_LA$ from GPS Lateral Acceleration}
+\label{sec: ClLA from GPS Lateral Acceleration}
+
+At the tyre friction limit in a high-speed corner, the lateral force balance gives:
+
+\begin{equation}
+    a_{lat} = \mu \left(g+ \frac{\rho\cdot C_LA}{2m}\cdot v^2\right)
+\end{equation}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=latex, every node/.style={font=\small}]
+
+    % ── Car asset (front-on view, nose toward reader) ─────────────────────
+    % Image ~1.8:1 aspect; at width=5cm height≈2.8cm
+    \node[anchor=south west, inner sep=0] (car) at (0, 0)
+        {\includegraphics[width=5cm]{Methodology/Figures/car_front.pdf}};
+
+    % ── Weight: downward from bottom of car into white space below ───────
+    \draw[->, line width=1.4pt, red!60!black]
+        (2.5, -0.05) -- (2.5, -1.0);
+    \node[right=3pt, red!60!black] at (2.5, -0.52) {$mg$};
+
+    % ── Aerodynamic downforce: downward from above ────────────────────────
+    \draw[->, line width=1.4pt, accent_colour]
+        (1.6, 4.0) -- (1.6, 2.82);
+    \node[left=3pt, accent_colour, align=right] at (1.55, 3.4)
+        {$\tfrac{1}{2}\rho C_{LA} v^2$};
+    \node[above, accent_colour, font=\footnotesize] at (1.6, 4.05)
+        {downforce};
+
+    % ── Normal reaction: upward at right of car ───────────────────────────
+    \draw[->, line width=1.4pt, green!50!black]
+        (5.8, 0.05) -- (5.8, 2.2);
+    \node[right=3pt, green!50!black, align=left] at (5.8, 1.12)
+        {$N = mg$\\$\;\;+\,\tfrac{1}{2}\rho C_{LA} v^2$};
+
+    % ── Lateral tyre friction: leftward (centripetal) ─────────────────────
+    \draw[->, line width=2.0pt, violet!75!black]
+        (-0.05, 0.5) -- (-2.2, 0.5);
+    \node[above=3pt, violet!75!black] at (-1.12, 0.5)
+        {$F_\mathrm{lat} = \mu N$};
+    \node[below=2pt, gray!55!black, font=\footnotesize] at (-1.12, 0.5)
+        {toward corner centre};
+
+\end{tikzpicture}
+\caption{Lateral force balance (front view, car approaching corner). Aerodynamic downforce augments the tyre normal load: $N = mg + \tfrac{1}{2}\rho C_{LA}v^2$. At the friction limit the lateral tyre force is $F_\mathrm{lat} = \mu N$, giving $a_{lat} = \mu(g + \rho C_{LA}v^2/2m)$, from which $C_{LA}$ is recovered using the measured lateral acceleration, vehicle mass, and assumed $\mu$. Car silhouette by Hey Rabbit, The Noun Project.}
+\label{fig: lateral force balance}
+\end{figure}
+
+GPS position rows (Source\,==\,`pos', $\sim\!10$~Hz) are differentiated to compute lateral acceleration. Velocity is computed from position differences; acceleration from velocity differences; both smoothed with a 5-sample rolling mean. The vehicle mass is fixed at the qualifying value $m = 803$~kg (FIA 798~kg minimum plus an estimated 5~kg of fuel for one flying lap). Air density $\rho$ is computed using the International Standard Atmosphere model applied to the ambient temperature and barometric pressure channels available in the FastF1 session data (\texttt{Temperature} and \texttt{Pressure} fields), sampled at the mean of the qualifying session. Lateral acceleration is projected from the world frame using the cross-product formula. Samples above circuit-specific speed and lateral-$g$ thresholds are used; these select only near-limit apex samples where the friction model is valid. $C_LA$ is the median over all push-lap estimates with $\mu = 1.8$ assumed. The value is chosen as the central estimate for Pirelli slick compounds (C3--C5 class) at representative operating temperatures of $90$--$110\,^\circ$C, consistent with the midpoint of published F1-specific friction estimates ($\mu \approx 1.5$--$2.0$; the upper end applies to fresh tyres at peak temperature, the lower end to aged or out-of-window tyres). Sensitivity to $\mu$ is documented in \S\ref{sec: CLA Depends on Assumed mu}.
+
+\textbf{Why qualifying rather than free practice.} Earlier iterations of this analysis used FP2 telemetry for $C_LA$. Qualifying push laps are preferred because: (1)~tyres are at representative operating temperature on every lap; (2)~drivers are consistently at the friction ceiling, minimising partial-utilisation bias; and (3)~the push-lap filter (no pit-out/in time; lap time within 110\% of driver's session best) cleanly removes banker laps and aborted runs without requiring session-specific tuning. The circuit-specific thresholds are chosen per venue to match the highest-loaded apex samples while excluding mid-corner transitions:
+
+\begin{table}[h]
+    \centering
+        \caption{Per-circuit lateral-$g$ and speed thresholds used for $C_LA$ sample selection.}
+    	\label{tab: cla thresholds}
+	\begin{tabular}{lcc}
+        \toprule
+        Circuit & Lateral-$g$ threshold & Speed threshold \\
+        \midrule
+        Jeddah            & $2.5\,g$ & $150$~km/h \\
+        Spa-Francorchamps & $3.5\,g$ & $200$~km/h \\
+        Silverstone       & $3.5\,g$ & $180$~km/h \\
+        Yas Marina        & $3.0\,g$ & $150$~km/h \\
+        Suzuka            & $3.5\,g$ & $180$~km/h \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \input{Methodology/Figures/03_ClA_vs_lap.pgf}
+    \caption[Per-lap CLA estimates from qualifying push laps (driver 14, AMR24). Error bars represent +-1 sigma from the GPS lat-g fit. Dashed red line is the median; shaded band is the interquartile range.]{Illustrative per-lap $C_LA$ estimates from qualifying push laps (driver~14, AMR24). Error bars represent $\pm1\sigma$ from the GPS lat-g fit. Dashed red line is the median; shaded band is the interquartile range.}
+    \label{fig:cla_vs_lap}
+\end{figure}
+
+\subsection[Deriving CDA]{Deriving $C_DA$ from Fitted Parameters}
+\label{sec: Deriving CDA}
+
+With $\hat\alpha$ from the pooled coast-down fit (\S\ref{sec: Pooled Fitting}) and $C_LA$ from the GPS lateral-$g$ method (\S\ref{sec: ClLA from GPS Lateral Acceleration}), the aerodynamic drag area is:
+
+\begin{equation}
+    \label{eq: cda_identity}
+    C_DA = \frac{2\hat\alpha}{\rho} - C_{rr} \cdot C_LA
+\end{equation}
+
+where $2\hat\alpha/\rho$ is the composite parameter and $C_{rr} \cdot C_LA$ subtracts the aerodynamic normal-force contribution to rolling resistance: because downforce increases tyre normal load, the total rolling resistance force is $\beta_\text{total} = C_{rr}(mg + \tfrac{1}{2}\rho C_{LA} v^2)$, and the $v^2$-dependent term enters $\hat\alpha$ as an offset $C_{rr}\tfrac{1}{2}\rho C_{LA}$ that must be removed to recover the pure drag area. Uncertainty in $C_DA$ receives contributions from both $\hat\alpha$ and $C_LA$:
+
+\begin{equation}
+    \label{eq: cda_uncertainty}
+    \sigma_{C_DA} = \sqrt{\left(\frac{2\,\sigma_{\hat\alpha}}{\rho}\right)^2 + \left(C_{rr}\,\sigma_{C_LA}\right)^2}
+\end{equation}
+
+Per-circuit values are given in Table~\ref{tab: five circuit results}; the Jacobian $\sigma_{\hat\alpha}$ used there is a lower bound on the true fitting uncertainty --- see \S\ref{sec: Absolute CDA Interpretation} for the bootstrap-corrected estimate. Note that the coast-down fit uses free-practice mass ($\sim\!855$~kg mean) while $C_LA$ uses qualifying mass ($803$~kg); the resulting systematic offset in $C_DA$ is quantified in \S\ref{sec: Absolute CDA Interpretation}.
+
+\subsection[DRS Drag Delta]{DRS Drag Delta \cite{2024_FIA_regs}}
+\label{sec: Methodology; DRS Drag Delta}
+
+Race laps on the Monza main straight are classified as DRS-open (DRS channel > 10 in any sample within 0-600 m from lap start) or DRS-closed. An energy balance over the activation zone converts the mean trap speed difference to $\Delta C_DA$, defined as $C_{DA,\text{open}} - C_{DA,\text{closed}}$:
+
+\begin{equation}
+    \Delta C_DA = -\,m \left(\frac{ v_{open}^2-v_{closed}^2}{\rho \int v^2 dx}\right)
+\end{equation}
+
+(Derived by equating aerodynamic work over the activation zone, $\tfrac{1}{2}\rho\,\Delta C_DA\int v^2\,dx$, to the kinetic energy difference at trap, $\tfrac{1}{2}m(v_\text{open}^2 - v_\text{closed}^2)$; the $\tfrac{1}{2}$ factors cancel.) The leading negative sign encodes the physical convention: a higher open-DRS trap speed ($v_{open} > v_{closed}$) corresponds to \emph{reduced} drag area, hence a negative $\Delta C_DA$. This derivation assumes equal MGU-K thrust on DRS-open and DRS-closed laps across the activation zone; the ERS confound is quantified in \S\ref{sec: DRS Inseparable From Slipstream}. The integral is computed numerically from a representative DRS-closed speed trace, where $v = v(x)$ is the measured speed as a function of position along the activation zone, taken from a median DRS-closed lap; $m$ is the per-lap mass from \S\ref{sec: Coast Down ODE Model}, evaluated at the race lap number to account for fuel burn. Using the DRS-closed profile as a proxy for the denominator integral slightly overstates $|\Delta C_DA|$: in reality, DRS-open laps reach higher speeds throughout the zone, not just at trap, so their $\int v^2\,dx$ denominator is larger than the closed-lap approximation assumes. This bias is toward a more negative $\Delta C_DA$ than the true value, and is secondary to the slipstream confound discussed in \S\ref{sec: DRS Inseparable From Slipstream}. A slipstream-stratification analysis is performed by estimating the gap to the car ahead for each DRS-open lap from lap-end timing differentials, and restricting to marginal-DRS laps (gap 0.5-1.0 s) to reduce wake effects.

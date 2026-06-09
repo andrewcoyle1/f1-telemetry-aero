@@ -35,12 +35,24 @@ def air_density(temp_C: float, pressure_hPa: float) -> float:
 def car_mass(
     lap_number: int,
     M_car: float = 798.0,
-    M_driver: float = 80.0,
     M_fuel_0: float = 95.0,
     fuel_burn: float = 1.8,
 ) -> float:
+    """Per-lap car mass (kg).
+
+    M_car = 798 kg is the 2024 FIA minimum weight (Art. 4.1), which already
+    INCLUDES the driver (the regulation assumes driver + seat >= 80 kg counted
+    within the 798 kg). The driver must therefore NOT be added separately — doing
+    so double-counts ~80 kg and inflates the fitted alpha (and hence CdA/ClA, both
+    of which scale ~linearly with assumed mass) by ~9%.
+
+    Fuel is modelled as a linear burn from M_fuel_0 at a constant rate. Note this
+    treats LapNumber as monotonic within a session and does not model refuelling
+    between practice runs; fuel is a ~5% mass term so the residual error is small
+    but adds per-segment noise (see Limitations).
+    """
     fuel = max(0.0, M_fuel_0 - fuel_burn * lap_number)
-    return M_car + M_driver + fuel
+    return M_car + fuel
 
 
 def extract_crr_and_composite(

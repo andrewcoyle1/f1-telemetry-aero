@@ -1,0 +1,87 @@
+\section{Results}
+\label{sec: Results}
+
+\subsection{Five-Circuit Coast-Down and $C_LA$ Results}
+\label{sec: Five Circuit Results}
+
+Table~\ref{tab: five circuit results} summarises the aerodynamic parameters extracted at each of the five selected circuits. All results use driver~14 (Alonso, AMR24) with the identical fitting methodology (\S\ref{sec: Methodology}).
+
+\begin{table*}[h]
+    \centering
+    \caption{Aerodynamic parameters across five circuits (driver~14, AMR24, 2024). $\rho$ is the mean free-practice air density. $n_\text{segs}$ is the coast-down segment count; $n_\text{CLA}$ the qualifying push-lap count. $C_LA$ total uncertainty combines statistical SE of the median and $\mu$-systematic in quadrature (see \S\ref{sec: CLA Depends on Assumed mu}).}
+    \label{tab: five circuit results}
+    \begin{tabularx}{\linewidth}{l C C C C C c c}
+        \toprule
+        Circuit & $\rho$~(kg/m$^3$) & $\hat\alpha$~(N\,s$^2$/m$^2$) & Composite $2\hat\alpha/\rho$~(m$^2$) & $C_LA$~(m$^2$) & $C_DA$~(m$^2$) & $n_\text{segs}$ & $n_\text{CLA}$ \\
+        \midrule
+        Jeddah 2024      & 1.180 & $0.876 \pm 0.004$ & 1.485 & $2.66 \pm 0.42$ & $1.448 \pm 0.009^\dagger$ & 13 & 5 \\
+        Spa 2024         & 1.145 & $0.812 \pm 0.007$ & 1.419 & $3.06 \pm 0.48$ & $1.376 \pm 0.014^\dagger$ &  5 & 9 \\
+        Silverstone 2024 & 1.193 & $0.913 \pm 0.004$ & 1.532 & $3.14 \pm 0.51$ & $1.487 \pm 0.010^\dagger$ & 10 & 6 \\
+        Yas Marina 2024  & 1.178 & $0.817 \pm 0.008$ & 1.386 & $3.53 \pm 0.55$ & $1.335 \pm 0.016^\dagger$ &  6 & 6 \\
+        Suzuka 2024      & 1.223 & $1.071 \pm 0.008$ & 1.750 & $4.33 \pm 0.67$ & $1.689 \pm 0.017^\dagger$ &  8 & 4 \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{2pt}
+    {\small $C_{rr} \approx 0.014$ at all circuits (by construction; see \S\ref{sec: Coast Down ODE Model}). $C_LA$ uncertainty: stat SE of median $\oplus$ $\mu$-systematic. $^\dagger$$C_DA$ $\sigma$ values are Jacobian lower bounds; bootstrap-corrected CIs and the conservative $13\times$ scaling used in the polar are derived in \S\ref{sec: Absolute CDA Interpretation}.}
+\end{table*}
+
+The composite $2\hat\alpha/\rho$ ranges from $1.386$~m$^2$ (Yas Marina) to $1.750$~m$^2$ (Suzuka), consistent with Suzuka running significantly more wing than any other circuit in the set. $C_LA$ increases monotonically from $2.66$~m$^2$ (Jeddah) to $4.33$~m$^2$ (Suzuka), as expected for a low-to-high downforce progression.
+
+One anomaly is visible in the $C_DA$ column: Yas Marina ($1.335$~m$^2$) sits below Spa ($1.376$~m$^2$) despite having a higher $C_LA$, which would be physically inconsistent under pure wing-angle variation. Engine-braking contamination of the coast-down segment pool was hypothesised as the cause. A gear-stratified falsification test (see \texttt{scripts/yas\_marina\_gear\_strat.py}) was performed: of 6 passing segments, 2 are in gear~8; the gear-8-only pooled fit yields $\hat\alpha = 0.789$, a $-3.4\%$ residual relative to the all-segment value of $0.817$. This is well within the bootstrap 90\% CI half-width of $\pm 0.101$, so engine-braking contamination is \emph{not} supported by the data (Jacobian-to-bootstrap ratio at Yas Marina: $12.0\times$, consistent with other circuits). The origin of the anomalous $C_DA$ ordering at Yas Marina therefore remains unexplained by the available data; the circuit is retained in the polar as a geometric outlier with an unresolved cause. Excluding Yas Marina shifts the polar slope from $3.02$ to $4.80$, but the confidence interval includes zero in both cases and the qualitative interpretation (positive slope, indeterminate efficiency) is unchanged; see \S\ref{sec: Aero Polar}.
+
+\subsubsection{Reference Circuit Validation (Jeddah)}
+\label{sec: Jeddah Validation}
+
+Jeddah is used as the reference circuit for validation tests because it has the largest coast-down segment count (13 of 13 passing $R^2 \geq 0.90$).
+
+\textbf{Gear-stratified falsification.} Nine of the thirteen segments are in gear~8. The gear-8-only pooled fit yields $\hat\alpha = 0.867$ ($-1.0\%$ relative to the all-segment value of $0.876$), not statistically distinguishable from zero within the bootstrap 90\% CI ($\pm 3.1\%$). Full interpretation and physical reasoning are in \S\ref{sec: Absolute CDA Interpretation}.
+
+\textbf{Inter-driver spread.} Driver~18 (Stroll) has three passing segments at Jeddah; the independent pooled fit yields $\hat\alpha = 0.968$, a $10.4\%$ spread relative to driver~14. Because driver~14 is used at \emph{every} circuit in this analysis, this spread is not a source of cross-circuit bias; it is reported as a bound on intra-team setup variation (balance preferences, wing asymmetry, mechanical setup).
+
+\textbf{Bootstrap uncertainty.} A segment-resampling bootstrap ($n = 1000$ replicates; \S\ref{sec: Absolute CDA Interpretation}) gives a 90\% CI of $[0.847, 0.902]$ on $\hat\alpha$, a half-width of $\pm 0.027$~N\,s$^2$/m$^2$ --- 6.8 times the Jacobian-derived bound of $\pm 0.004$. This is lower than the $\sim\!13\times$ ratio observed at Monza in earlier analysis (the Monza ratio was re-evaluated to account for a factor-of-two correction to the Jacobian covariance formula; the corrected Jacobian bound scales by $\sqrt{2}$ while the bootstrap estimate is unchanged, reducing the ratio from the previously reported $19\times$). The conservative $13\times$ scaling is retained for the polar uncertainty (see \S\ref{sec: Aero Polar}; full treatment in \S\ref{sec: Absolute CDA Interpretation}) to avoid under-stating $C_DA$ uncertainty at circuits where the ratio was not independently calibrated.
+
+\subsection{Aero Polar}
+\label{sec: Aero Polar}
+
+Figure~\ref{fig: aero polar}(a) plots $C_LA$ against $C_DA$ for all five circuits. An OLS regression gives:
+
+\begin{equation}
+    C_LA = 3.02 \cdot C_DA - 1.09
+    \label{eq: ols polar}
+\end{equation}
+
+Note that all five $C_DA$ values share a common cross-session mass inconsistency (FP mass $\sim\!855$~kg vs.\ qualifying mass $803$~kg), estimated to inflate each absolute composite by $\sim\!0.10$~m$^2$ (\S\ref{sec: Absolute CDA Interpretation}); this offset is common-mode across circuits and cancels in the polar slope, but bounds absolute accuracy.
+
+The slope estimates the incremental aerodynamic efficiency $\Delta C_LA/\Delta C_DA$---how much additional downforce each unit of additional drag area delivers as wing angle increases---and is distinct from the total $L/D$ area ratio ($C_LA/C_DA \approx 2.5$ at Jeddah). The positive slope is physically consistent with wing-angle variation: adding downforce wing area increases both $C_LA$ and $C_DA$ simultaneously. A Monte Carlo simulation ($N = 50\,000$ replicates) propagates the $C_DA$ uncertainty (Jacobian $\alpha_\text{std}$ scaled by the conservative $13\times$ bootstrap ratio) and the total $C_LA$ uncertainty (statistical SE of median combined with $\mu$ systematic in quadrature) to give a 90\% confidence interval on the slope of $[-2.3,\, +6.0]$~m$^2$/m$^2$ ($1.08\,\sigma$ from zero; MC standard deviation $= 2.80$). (The $13\times$ scaling derivation and its Jeddah calibration are given in full in \S\ref{sec: Absolute CDA Interpretation}.)
+
+\textbf{Robustness check: Deming regression.} OLS is inconsistent when the regressor ($C_DA$) carries non-negligible measurement error relative to its range. After the $13\times$ bootstrap correction the $C_DA$ uncertainties are $0.12$--$0.22$~m$^2$ per circuit, which is $33$--$62\%$ of the total $C_DA$ spread of $0.35$~m$^2$; errors-in-variables attenuation bias is therefore substantial in this dataset. Deming regression (orthogonal regression accounting for independent errors in both axes; see \texttt{scripts/deming\_regression.py}) with per-circuit variance ratio $\lambda_i = (\sigma_{C_DA,i}/\sigma_{C_LA,i})^2$ gives a slope of $6.95$~m$^2$/m$^2$ (bootstrap 90\% CI: $[-9.3,\, +8.8]$~m$^2$/m$^2$; $10\,000$ resamples), compared to the OLS estimate of $3.02$. The upward shift is consistent with the expected direction of attenuation correction. The OLS result~(Eq.~\ref{eq: ols polar}) is retained as the primary reported value for continuity with the polar figure. Two features of the Deming result deserve note. First, the CI widened substantially relative to OLS --- from $[-2.3, +6.0]$ to $[-9.3, +8.8]$~m$^2$/m$^2$ --- because with only $n=5$ points, the Deming closed-form amplifies the leverage of individual outlier resamples; this widening is expected and is not a deficiency of the method. Second, the bootstrap distribution is left-skewed (the 5th-percentile tail extends further from the point estimate than the 95th), driven by resamples that over-weight Yas Marina. Both effects are artefacts of the small sample size, and neither changes the qualitative conclusion: the confidence interval includes zero and the slope is poorly determined at this sample size regardless of estimator.
+
+Note that OLS on five data points yields 3~degrees of freedom for the slope; on four points (Yas Marina excluded), 2~DOF. At these sample sizes the $t_{0.05}$ multiplier ($2.35$ and $2.92$, respectively) materially widens the frequentist interval relative to a Gaussian approximation, so the MC 90\% CIs should be read as approximate.
+
+The confidence interval includes zero, so a precise aerodynamic efficiency cannot be stated. The improvement over earlier analysis is qualitative: the five-point polar using a single driver and data-driven circuit selection recovers the correct physical sign (positive slope), whereas the prior three-circuit analysis including Monza---where qualifying $C_LA$ was structurally unreliable (only 3 valid laps)---produced a spurious negative slope ($-2.1$, $0.43\,\sigma$).
+
+\textbf{Robustness check.} Yas Marina is flagged as a geometric outlier in the polar (open diamond, panel~(a)): its fitted $C_DA = 1.335$~m$^2$ is the lowest of the five circuits yet its $C_LA = 3.53$~m$^2$ is the second highest, a physically inconsistent ordering under pure wing-angle variation. Engine-braking contamination was hypothesised as the cause but was ruled out by the gear-stratified falsification in \S\ref{sec: Five Circuit Results}; the origin of the anomaly is currently unexplained. Figure~\ref{fig: aero polar}(b) repeats the polar excluding Yas Marina. The slope increases to $4.80$~m$^2$/m$^2$ (MC 90\% CI: $[-2.9, +9.1]$; $0.99\,\sigma$ from zero), consistent with the five-circuit result within uncertainty. The sign and approximate magnitude of the slope are robust to this exclusion; the wider CI in the four-circuit case reflects the loss of one data point without a proportional reduction in $C_LA$ uncertainty.
+
+The binding uncertainty in both fits is the $\mu$ systematic ($\pm 0.4$--$0.7$~m$^2$ per circuit), which contributes $\sim\!70\%$ of the MC slope variance. Reducing this---either through independent tyre-friction data or by extending the analysis to circuits where the friction limit is more tightly constrained---would be the highest-leverage improvement to the polar.
+
+\begin{figure}[h]
+    \centering
+    \input{Results/Figures/06_circuit_comparison.pgf}
+    \caption[Aero polar sensitivity for Aston Martin AMR24 (driver 14, 2024). Left: all five circuits with Yas Marina flagged anomalous (open diamond). Right: four-circuit robustness check excluding Yas Marina. Error bars show $1\sigma$ total uncertainty on $C_DA$ (bootstrap-scaled) and $C_LA$ (statistical $\oplus$ $\mu$-systematic).]{Aero polar sensitivity for the Aston Martin AMR24 (driver~14, 2024). Error bars show $1\sigma$ total uncertainty on $C_DA$ (Jacobian $\times\,13\times$ bootstrap scale) and $C_LA$ (stat $\oplus$ $\mu$-systematic). \textbf{(a)}~All five circuits; Yas Marina (open diamond, $\dagger$) is a geometric outlier whose anomalous $C_DA$ ordering is unexplained (engine-braking contamination was falsified; see \S\ref{sec: Five Circuit Results}). OLS slope $= 3.02$; MC 90\% CI $= [-2.3, +6.0]$~m$^2$/m$^2$. \textbf{(b)}~Robustness check excluding Yas Marina. OLS slope $= 4.80$; MC 90\% CI $= [-2.9, +9.1]$~m$^2$/m$^2$. Both CIs include zero; neither fit constrains the slope to the positive physical regime.}
+    \label{fig: aero polar}
+\end{figure}
+
+\subsection{DRS Drag Delta}
+\label{sec: Results; DRS Drag Delta}
+
+The DRS analysis is included to characterise the limits of the race-data method; as the confound analysis in \S\ref{sec: DRS Inseparable From Slipstream} shows, a clean DRS-only drag reduction is not isolatable from this data source.
+
+The pooled Monza race-lap analysis yields 194 DRS-open and 733 DRS-closed classified car-laps. By convention, $\Delta C_DA < 0$ denotes reduced drag area (higher trap speed); $\Delta C_DA > 0$ would indicate increased drag. The pooled trap speed difference is:
+
+\begin{equation}
+    \Delta v_\text{trap} = 11.91 \pm 0.53~\text{km/h} \quad (90\%~\text{CI:}\ 10.87\text{--}12.95~\text{km/h})
+\end{equation}
+
+Converting via the energy balance gives $\Delta C_DA = -0.098$~m$^2$ ($90\%$ CI: $-0.26$ to $+0.05$~m$^2$). Note that the $\pm 0.53$~km/h standard error on $\Delta v_\text{trap}$ alone would map to a far tighter, strictly-negative $\Delta C_DA$ interval; the much wider CI quoted here is obtained by Monte Carlo over the full lap-to-lap trap-speed distributions of both groups (not from propagating the mean's SE), which is why its upper tail crosses zero. Physically, slipstream on DRS-open laps can inflate their trap speed enough to sign-flip the naive energy balance on individual laps, making DRS appear to add drag. The measured $-0.098$~m$^2$ is substantially smaller in magnitude than an unconfounded DRS drag reduction. The discrepancy is explained by slipstream confounding: every DRS-open lap in a race also has the following car within $1\,\text{s}$ of the car ahead, the same condition that guarantees aerodynamic wake exposure.
+
+Stratifying by estimated gap to the car ahead (marginal-DRS group: $0.5-1.0\,\text{s}$, $n = 87$ laps) reduces the delta to $10.09$~km/h and $\Delta C_DA$ to $-0.079$~m$^2$, indicating some slipstream reduction but confirming that a pure DRS measurement is not achievable from race data alone.

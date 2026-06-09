@@ -1,0 +1,58 @@
+======================================================================
+Gear-stratified falsification test — Yas Marina 2024
+Driver: Fernando Alonso (#14, Aston Martin)
+======================================================================
+
+Step 1: Cache check
+----------------------------------------
+  FP1: FOUND  (/Users/andrewcoyle/f1-telemetry-aero/cache/2024/2024-12-08_Abu_Dhabi_Grand_Prix/2024-12-06_Practice_1)
+  FP2: FOUND  (/Users/andrewcoyle/f1-telemetry-aero/cache/2024/2024-12-08_Abu_Dhabi_Grand_Prix/2024-12-06_Practice_2)
+  FP3: FOUND  (/Users/andrewcoyle/f1-telemetry-aero/cache/2024/2024-12-08_Abu_Dhabi_Grand_Prix/2024-12-07_Practice_3)
+  All three practice sessions are cached — proceeding.
+
+Step 2: Loading sessions and extracting coast-down segments
+  Criteria: entry speed > 180 km/h, Dv > 25 m/s, throttle < 5%, brake = 0
+----------------------------------------
+  Total segments passing filters: 6
+  Mean air density rho:           1.1784 kg/m^3
+  Gear distribution: {5: 1, 6: 1, 7: 2, 8: 2}
+
+Step 3: Pooled fit — ALL segments
+----------------------------------------
+  alpha_all     = 0.8166  (Jacobian std = +/-0.0084)
+
+Step 4: Pooled fit — gear-8 segments only
+----------------------------------------
+  Gear-8 segments: 2 / 6
+  alpha_gear8   = 0.7891
+  Relative diff = -3.37%  (alpha_gear8 - alpha_all) / alpha_all
+
+Step 5: Segment-resampling bootstrap (1000 replicates, 90% CI)
+----------------------------------------
+  Bootstrap 90% CI = [0.7373, 0.9395]
+  Half-width                = +/-0.1011
+  Jacobian std              = +/-0.0084   ratio = 12.0x
+
+======================================================================
+SUMMARY
+======================================================================
+  Circuit           : Yas Marina 2024 (Abu Dhabi GP weekend)
+  Driver            : Fernando Alonso (#14, Aston Martin)
+  Sessions          : FP1 + FP2 + FP3
+  n_total segments  : 6
+  n_gear8 segments  : 2
+  alpha_all         : 0.8166  N.s^2/m^2
+  alpha_gear8       : 0.7891  N.s^2/m^2
+  % difference      : -3.37%
+  Bootstrap 90% CI  : [0.7373, 0.9395]
+  CI half-width     : +/-0.1011
+
+  VERDICT:
+    |alpha_gear8 - alpha_all| = 0.0275 <= CI half-width 0.1011
+    The gear-8/all difference is WITHIN the bootstrap 90% CI.
+    -> Engine braking is NOT a significant inflating term at Yas Marina.
+    -> H0 (no contamination) is NOT rejected.
+    -> The Yas Marina anomaly in the aero polar cannot be attributed
+       to engine-braking contamination of coast-down segments.
+
+======================================================================

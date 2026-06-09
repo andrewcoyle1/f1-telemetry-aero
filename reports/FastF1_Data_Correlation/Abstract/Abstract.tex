@@ -1,0 +1,8 @@
+\section*{Abstract}
+This report describes a methodology for estimating aerodynamic drag area ($C_DA$), downforce area ($C_LA$), and rolling resistance coefficient ($C_{rr}$) from publicly available F1 telemetry using the FastF1 library.
+
+Coast-down segments from free-practice sessions (FP1--FP3) are fitted to an ODE model incorporating MGU-K energy recovery. $C_LA$ is estimated independently via GPS-derived lateral acceleration from qualifying push laps. Constructor and circuit selection is data-driven: all 20 drivers across all 24 rounds of the 2024 calendar are surveyed on two joint metrics (coast-down segment count and qualifying-lap $C_LA$ sample count), and the constructor with the highest aggregate score is selected. Aston Martin (driver~14, Alonso, AMR24) ranks first; the five circuits with the best joint data quality spanning the full downforce range are chosen: Jeddah, Spa-Francorchamps, Silverstone, Yas Marina, and Suzuka.
+
+A five-point aero polar ($C_LA$ vs.\ $C_DA$) fitted by OLS yields a slope of $3.0$ (90\% CI: $-2.4$ to $+5.8$~m$^2$/m$^2$; 1.09$\sigma$ from zero). The slope is positive---consistent with the expected physical relationship between wing drag and downforce---but the confidence interval includes zero, so a definitive efficiency figure cannot be stated. The dominant uncertainty source is the assumed tyre friction coefficient $\mu = 1.8$ in the $C_LA$ estimator ($\pm0.4$--$0.7$~m$^2$ systematic per circuit). DRS drag reduction is investigated via race trap speeds but found to be inseparable from slipstream effects in the available data.
+
+An investigation into 2026 active aero measurements reveals that the F1 timing API does not broadcast active aero state, blocking mode-split analysis.

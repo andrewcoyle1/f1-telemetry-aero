@@ -1,0 +1,118 @@
+\documentclass[a4paper,twoside,12pt]{article}
+
+%% Page layout
+\usepackage[margin=1in, headheight=16pt]{geometry}
+\setlength{\marginparwidth}{2cm}
+
+%% Metadata
+\title{Aerodynamic Parameter Estimation from F1 Telemetry}
+\author{Andrew Coyle}
+\newcommand{\keywords}{Formula 1, aerodynamics, drag area, downforce, coast-down, telemetry, FastF1, parameter estimation}
+
+%% Language and font
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+\usepackage{mathpazo}  % Palatino font 
+\usepackage{soul}
+
+%% Units (replace SIunits with siunitx)
+\usepackage[squaren]{SIunits}  % or: \usepackage{siunitx}
+
+%% Bibliography
+\usepackage[numbers]{natbib}  % REPLACE cite with natbib for better control
+
+%% Paragraphs and spacing
+\usepackage[parfill]{parskip}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{enumitem}  % REPLACE enumerate with enumitem
+
+%% Math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%% Quotes
+\usepackage[autostyle=true]{csquotes}
+
+%% Graphics and floats
+\usepackage{graphicx}  % pdftex option unnecessary with modern LaTeX
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{font=small, labelfont=bf}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\providecommand{\mathdefault}[1]{#1}
+
+%% Tables
+\usepackage{tabularx,booktabs}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage{tablefootnote}
+
+%% Code highlighting
+\usepackage{pythonhighlight}
+
+%% TODO notes
+\usepackage[colorinlistoftodos]{todonotes}
+
+%% Links and metadata
+\usepackage[colorlinks=true, allcolors=black]{hyperref}
+\usepackage{hyperxmp}
+
+%% Section formatting
+\usepackage[compact]{titlesec}
+\definecolor{accent_colour}{RGB}{5, 105, 185}
+
+\usepackage{titling}
+    
+    \pretitle{\begin{center}\Large\bfseries\color{accent_colour}}
+    \posttitle{\end{center}}
+    \preauthor{\begin{center}\normalsize}
+    \postauthor{\end{center}}
+    \predate{\begin{center}\small}
+    \postdate{\end{center}}
+\titleformat{\section}{\normalfont\large\bfseries\color{accent_colour}}{\thesection}{10pt}{\large}[\titlerule]
+\titlespacing*{\section}{0pt}{20pt}{20pt}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection}{10pt}{}  % Fixed: \thesubsection not \thesection
+\titlespacing*{\subsection}{0pt}{10pt}{10pt}
+
+%% Headers/footers
+\usepackage{fancyhdr}
+
+\makeatletter
+\hypersetup{
+    pdftitle={\@title},
+    pdfauthor={\@author},
+    pdfkeywords={\keywords},  % Added braces for safety
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+% maintaining separate .tex files for each chapter is good practice
+\input{Abstract/Abstract.tex}
+\input{introduction/introduction.tex}
+\input{DataAndSessionSelection/DataAndSessionSelection}
+\input{Methodology/Methodology}
+\input{Results/Results}
+\input{Limitations/Limitations}
+\input{2026ActiveAeroInvestigation/2026ActiveAeroInvestigation}
+\input{conclusion/conclusion.tex}
+
+\bibliographystyle{IEEEtran} %Changed to IEEETran by HS
+%\bibliographystyle{unsrt}
+
+\bibliography{bibs/sample}
+
+\clearpage
+
+% \appendix
+% \renewcommand{\thechapter}{A\arabic{chapter}}
+% \input{appendix/appendix.tex}
+
+
+\end{document}

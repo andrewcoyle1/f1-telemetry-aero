@@ -1,0 +1,8 @@
+\section{Introduction}
+\label{sec: Introduction}
+
+Aerodynamic characterisation of Formula 1 cars is central to setup and race strategy. Teams measure $C_DA$ and $C_LA$ in wind tunnels and CFD but public access to these parameters is limited. The F1 live timing API, exposed through the FastF1 Python library \cite{FastF1}, provides car telemetry at 240 Hz and GPS position at 10 Hz for all sessions. This creates an opportunity to estimate aerodynamic parameters from first principles using freely available data.
+
+Prior work on extracting aerodynamic parameters from road-car coast-down tests is well established, but F1 cars introduce several complications: active energy recovery during coasting (MGU-K), ride-height-dependent ground-effect aerodynamics, and the lack of direct brake force measurement. This report describes a methodology that addresses the energy recovery term explicitly. Sources of residual model mis-specification are investigated through gear-stratified and multi-driver sensitivity analyses; the approach is validated through cross-circuit comparison and internal consistency checks.
+
+The Aston Martin AMR24 is used as the reference vehicle, selected by a data-driven survey of all 24 rounds and all 20 drivers in the 2024 season (\S\ref{sec: Constructor and Circuit Survey}). Five circuits spanning the full downforce range are analysed: Jeddah (low), Spa-Francorchamps (medium-low), Silverstone (medium), Yas Marina (medium-high), and Suzuka (high). All results use driver~14 (Alonso) throughout (see \S\ref{sec: Session Selection} for selection rationale).
